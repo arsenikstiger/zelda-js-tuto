@@ -15,6 +15,12 @@ let movingSpeed = 200;
 let movingSpeedX = 0;
 let movingSpeedY = 0;
 
+let bulletX = 0;
+let bulletY = 0;
+let bulletSpeed = 400;
+let bulletSpeedX = 0;
+let bulletSpeedY = 0;
+
 let screenX = 0;
 let screenY = 0;
 
@@ -46,7 +52,7 @@ let keyMap = {
   37: "left",
   38: "up",
   40: "down",
-  27: "space",
+  32: "space",
 };
 
 window.addEventListener("keydown", keydown, false);
@@ -291,6 +297,10 @@ function drawCharacter() {
     playerX + playerSize / 2 + 1 - 12 / 2,
     informationHeight + playerY + playerSize / 2 + 1 + 12 / 2
   );
+}
+
+function drawBullet() {
+
 }
 
 // DRAW FUNCTIONS
