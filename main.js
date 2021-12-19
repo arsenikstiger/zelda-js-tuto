@@ -7,6 +7,7 @@ ctx.imageSmoothingQuality = "high";
 
 let informationHeight = 26;
 
+// Player
 let playerX = 0;
 let playerY = 0;
 let playerSize = 100;
@@ -15,6 +16,22 @@ let movingSpeed = 200;
 let movingSpeedX = 0;
 let movingSpeedY = 0;
 
+let directionX = 1;
+let directionY = 0;
+           
+// Bullet
+let bulletX = 0;
+let bulletY = 0;
+let bulletSize = 20;
+let bulletExists = false;
+let bulletSpeed = 1000;
+let bulletSpeedX = 0;
+let bulletSpeedY = 0;
+
+let movingBulletX = 0;
+let movingBulletY = 0;
+
+// Screen
 let screenX = 0;
 let screenY = 0;
 
@@ -46,13 +63,17 @@ let keyMap = {
   37: "left",
   38: "up",
   40: "down",
-  27: "space",
+  32: "space",
 };
 
 window.addEventListener("keydown", keydown, false);
 window.addEventListener("keyup", keyup, false);
-// The proper game loop
-window.requestAnimationFrame(gameLoop);
+
+initialize();
+
+function initialize() {
+  window.requestAnimationFrame(gameLoop);
+}
 
 function gameLoop(timestamp) {
   update(timestamp);
@@ -64,8 +85,12 @@ function gameLoop(timestamp) {
 
 function update(timestamp) {
   updateSecondsPassed(timestamp);
+
   updatePlayerSpeed();
   updatePlayerPosition();
+
+  updateBulletSpeed();
+  updateBulletPosition();
 }
 
 function updateSecondsPassed(timestamp) {
@@ -96,6 +121,21 @@ function updatePlayerSpeed() {
   } else {
     movingSpeedY = 0;
   }
+
+  if (movingSpeedX === 0 && movingSpeedY === 0) {
+
+  } else if (movingSpeedX === 0) {
+    directionX = 0;
+    directionY = movingSpeedY / Math.abs(movingSpeedY);
+  } else if (movingSpeedY === 0) {
+    directionX = movingSpeedX === 0 ? directionX : movingSpeedX / Math.abs(movingSpeedX);
+    directionY = 0;
+  } else {
+    directionX = movingSpeedX / Math.abs(movingSpeedX);
+    directionY = movingSpeedY / Math.abs(movingSpeedY);
+
+  }
+
 }
 
 function updatePlayerPosition() {
@@ -172,6 +212,62 @@ function updatePlayerPosition() {
   }
 }
 
+function updateBulletSpeed() {
+  if (state.pressedKeys.space && !bulletExists) {
+    if (state.pressedKeys.left && state.pressedKeys.right) {
+      bulletSpeedX = directionX * bulletSpeed;
+    } else if (state.pressedKeys.left) {
+      bulletSpeedX = -bulletSpeed;
+    } else if (state.pressedKeys.right) {
+      bulletSpeedX = bulletSpeed;
+    } else {
+      bulletSpeedX = directionX * bulletSpeed;
+    }
+
+    if (state.pressedKeys.up && state.pressedKeys.down) {
+      bulletSpeedY = directionY * bulletSpeed;
+    } else if (state.pressedKeys.up) {
+      bulletSpeedY = -bulletSpeed;
+    } else if (state.pressedKeys.down) {
+      bulletSpeedY = bulletSpeed;
+    } else {
+      bulletSpeedY = directionY * bulletSpeed;
+    }
+
+    bulletExists = true;
+    bulletX = playerX + (playerSize - bulletSize) / 2;
+    bulletY = playerY + (playerSize - bulletSize) / 2;
+  }
+}
+
+function updateBulletPosition() {
+  bulletX = Number.isNaN(bulletX) ? 0 : bulletX + bulletSpeedX * secondsPassed;
+  bulletY = Number.isNaN(bulletY) ? 0 : bulletY + bulletSpeedY * secondsPassed;
+
+  if (bulletX < 0 + (hasLeftWall ? wallSize : 0)) {
+    bulletExists = false;
+  }
+
+  if (bulletX > canvas.width - bulletSize - 1 - (hasRightWall ? wallSize : 0)) {
+    bulletExists = false;
+  }
+
+  if (bulletY < 0 + (hasTopWall ? wallSize : 0)) {
+    bulletExists = false;
+  }
+
+  if (
+    bulletY >
+    canvas.height -
+      bulletSize -
+      informationHeight -
+      1 -
+      (hasBottomWall ? wallSize : 0)
+  ) {
+    bulletExists = false;
+  }
+}
+
 // DRAW
 function draw() {
   resizeCanvasToDisplaySize();
@@ -211,7 +307,6 @@ function drawInformation_Time() {
     ("0" + today.getMinutes()).slice(-2) +
     ":" +
     ("0" + today.getSeconds()).slice(-2);
-
   let measure = ctx.measureText(time);
   ctx.fillText(time, canvas.width / 2 - measure.width / 2, 22);
 }
@@ -224,11 +319,12 @@ function drawInformation_Name() {
 // DRAW GAME
 function drawGame() {
   drawWalls();
+  drawBullet();
   drawCharacter();
 }
 
 function drawWalls() {
-  console.log("drawWalls");
+  console.log("drawCharacter");
   // TOP
   if (hasTopWall)
     drawRectangle(
@@ -275,6 +371,21 @@ function drawWalls() {
     );
 }
 
+function drawBullet() {
+  console.log("drawBullet");
+
+  if (!bulletExists) return;
+
+  drawCircle(
+    bulletX + bulletSize / 2 + 1,
+    informationHeight + bulletY + bulletSize / 2 + 1,
+    bulletSize / 2,
+    "black",
+    2,
+    "red"
+  );
+}
+
 function drawCharacter() {
   console.log("drawCharacter");
   drawCircle(
@@ -285,12 +396,21 @@ function drawCharacter() {
     2,
     "white"
   );
-  ctx.fillStyle = "black";
-  ctx.fillText(
-    "Z",
-    playerX + playerSize / 2 + 1 - 12 / 2,
-    informationHeight + playerY + playerSize / 2 + 1 + 12 / 2
+
+  drawCircle(
+    playerX + playerSize / 2 + 1 + 20 * directionX,
+    informationHeight + playerY + playerSize / 2 + 1 + 20 * directionY,
+    5,
+    "black",
+    2,
+    "black"
   );
+  // ctx.fillStyle = "black";
+  // ctx.fillText(
+  //   "Z",
+  //   playerX + playerSize / 2 + 1 - 12 / 2,
+  //   informationHeight + playerY + playerSize / 2 + 1 + 12 / 2
+  // );
 }
 
 // DRAW FUNCTIONS
