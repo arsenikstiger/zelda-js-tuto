@@ -15,6 +15,12 @@ let movingSpeed = 200;
 let movingSpeedX = 0;
 let movingSpeedY = 0;
 
+let bonusDuration = 5;
+let bonusCooldown = 10;
+let bonusEnabled = false;
+let bonusAvailable = false;
+let bonusStartedAt = 0;
+
 let screenX = 0;
 let screenY = 0;
 
@@ -28,7 +34,8 @@ let wallFillColor = "brown";
 let wallSize = 20;
 
 let secondsPassed;
-let oldtimestamp;
+let currentTimestamp;
+let lastTimestamp;
 let fps;
 
 let state = {
@@ -46,7 +53,7 @@ let keyMap = {
   37: "left",
   38: "up",
   40: "down",
-  27: "space",
+  32: "space",
 };
 
 window.addEventListener("keydown", keydown, false);
@@ -55,25 +62,52 @@ window.addEventListener("keyup", keyup, false);
 window.requestAnimationFrame(gameLoop);
 
 function gameLoop(timestamp) {
-  update(timestamp);
+  currentTimestamp = timestamp;
+
+  update();
   draw();
 
   // Keep requesting new frames
   window.requestAnimationFrame(gameLoop);
 }
 
-function update(timestamp) {
-  updateSecondsPassed(timestamp);
+function update() {
+  updateSecondsPassed();
+  updateBonus();
   updatePlayerSpeed();
   updatePlayerPosition();
 }
 
-function updateSecondsPassed(timestamp) {
+function updateSecondsPassed() {
   // Calculate the number of seconds passed since the last frame
-  secondsPassed = (timestamp - oldtimestamp) / 1000;
+  secondsPassed = (currentTimestamp - lastTimestamp) / 1000;
   // Move forward in time with a maximum amount
   //   secondsPassed = Math.min(secondsPassed, 0.1);
-  oldtimestamp = timestamp;
+  lastTimestamp = currentTimestamp;
+}
+
+function updateBonus() {
+  if (state.pressedKeys.space && !bonusEnabled && bonusAvailable) {
+    bonusAvailable = false;
+    bonusEnabled = true;
+    bonusStartedAt = currentTimestamp;
+  }
+
+  if (
+    bonusEnabled &&
+    currentTimestamp - bonusStartedAt >= bonusDuration * 1000
+  ) {
+    bonusEnabled = false;
+    bonusStartedAt = currentTimestamp;
+  }
+
+  if (
+    !bonusEnabled &&
+    !bonusAvailable &&
+    currentTimestamp - bonusStartedAt >= bonusCooldown * 1000
+  ) {
+    bonusAvailable = true;
+  }
 }
 
 function updatePlayerSpeed() {
@@ -95,6 +129,11 @@ function updatePlayerSpeed() {
     movingSpeedY = movingSpeed;
   } else {
     movingSpeedY = 0;
+  }
+
+  if (bonusEnabled) {
+    movingSpeedX = movingSpeedX * 5;
+    movingSpeedY = movingSpeedY * 5;
   }
 }
 
@@ -218,7 +257,7 @@ function drawInformation_Time() {
 
 function drawInformation_Name() {
   let measure = ctx.measureText("Zelda");
-  ctx.fillText("Zelda", canvas.width - measure.width - 1, 22);
+  ctx.fillText("Link", canvas.width - measure.width - 1, 22);
 }
 
 // DRAW GAME
@@ -285,9 +324,41 @@ function drawCharacter() {
     2,
     "white"
   );
+  if (bonusEnabled) {
+    let bonusElapsed = currentTimestamp - bonusStartedAt;
+    let bonusRemaining = bonusDuration - bonusElapsed / 1000;
+    let bonusRemainingFactor = bonusRemaining / bonusDuration;
+    drawCircle(
+      playerX + playerSize / 2 + 1,
+      informationHeight + playerY + playerSize / 2 + 1,
+      (bonusRemainingFactor * playerSize) / 2,
+      "black",
+      2,
+      "red",
+      false
+    );
+  } else {
+    let bonusRemainingFactor = 1;
+    if (!bonusAvailable) {
+      let bonusElapsed = currentTimestamp - bonusStartedAt;
+      let bonusRemaining = bonusCooldown - bonusElapsed / 1000;
+      bonusRemainingFactor = 1 - bonusRemaining / bonusCooldown;
+    }
+
+    drawCircle(
+      playerX + playerSize / 2 + 1,
+      informationHeight + playerY + playerSize / 2 + 1,
+      (bonusRemainingFactor * playerSize) / 2,
+      "black",
+      2,
+      "green",
+      false
+    );
+  }
+
   ctx.fillStyle = "black";
   ctx.fillText(
-    "Z",
+    "L",
     playerX + playerSize / 2 + 1 - 12 / 2,
     informationHeight + playerY + playerSize / 2 + 1 + 12 / 2
   );
@@ -314,7 +385,7 @@ function resizeCanvasToDisplaySize() {
 
 function clearScreen() {
   console.log("clearScreen");
-  ctx.fillStyle = "green";
+  ctx.fillStyle = "#34c924";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
