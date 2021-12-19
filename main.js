@@ -7,14 +7,39 @@ ctx.imageSmoothingQuality = "high";
 
 let informationHeight = 26;
 
-let playerX = 0;
-let playerY = 0;
-let playerSize = 100;
+// Player 1
+let player1X = 0;
+let player1Y = 0;
+let player1Size = 100;
+let player1Speed = 800;
+let player1SpeedX = 0;
+let player1SpeedY = 0;
 
-let movingSpeed = 200;
-let movingSpeedX = 0;
-let movingSpeedY = 0;
+// Player 2
+let player2X = 0;
+let player2Y = 0;
+let player2Size = 100;
+let player2Speed = 800;
+let player2SpeedX = 0;
+let player2SpeedY = 0;
 
+// Player 2
+let Player2X = 0;
+let Player2Y = 0;
+let Player2Size = 100;
+let Player2Speed = 800;
+let Player2SpeedX = 0;
+let Player2SpeedY = 0;
+
+// Enemy
+let EnemyX = 0;
+let EnemyY = 0;
+let EnemySize = 100;
+let EnemySpeed = 100;
+let EnemySpeedX = 0;
+let EnemySpeedY = 0;
+
+// Screen
 let screenX = 0;
 let screenY = 0;
 
@@ -33,20 +58,32 @@ let fps;
 
 let state = {
   pressedKeys: {
-    left: false,
-    right: false,
     up: false,
     down: false,
+    left: false,
+    right: false,
     space: false,
+
+    z: false,
+    s: false,
+    q: false,
+    d: false,
+    a: false,
   },
 };
 
 let keyMap = {
-  39: "right",
-  37: "left",
   38: "up",
   40: "down",
-  27: "space",
+  37: "left",
+  39: "right",
+  32: "space",
+
+  90: "z",
+  83: "s",
+  81: "q",
+  68: "d",
+  65: "a",
 };
 
 window.addEventListener("keydown", keydown, false);
@@ -64,8 +101,15 @@ function gameLoop(timestamp) {
 
 function update(timestamp) {
   updateSecondsPassed(timestamp);
-  updatePlayerSpeed();
-  updatePlayerPosition();
+
+  updatePlayer1Speed();
+  updatePlayer1Position();
+
+  updatePlayer2Speed();
+  updatePlayer2Position();
+
+  updateEnemySpeed();
+  updateEnemyPosition();
 }
 
 function updateSecondsPassed(timestamp) {
@@ -76,34 +120,43 @@ function updateSecondsPassed(timestamp) {
   oldtimestamp = timestamp;
 }
 
-function updatePlayerSpeed() {
+function updatePlayer1Speed() {
   if (state.pressedKeys.left && state.pressedKeys.right) {
-    movingSpeedX = 0;
+    player1SpeedX = 0;
   } else if (state.pressedKeys.left) {
-    movingSpeedX = -movingSpeed;
+    player1SpeedX = -player1Speed;
   } else if (state.pressedKeys.right) {
-    movingSpeedX = movingSpeed;
+    player1SpeedX = player1Speed;
   } else {
-    movingSpeedX = 0;
+    player1SpeedX = 0;
   }
 
   if (state.pressedKeys.up && state.pressedKeys.down) {
-    movingSpeedY = 0;
+    player1SpeedY = 0;
   } else if (state.pressedKeys.up) {
-    movingSpeedY = -movingSpeed;
+    player1SpeedY = -player1Speed;
   } else if (state.pressedKeys.down) {
-    movingSpeedY = movingSpeed;
+    player1SpeedY = player1Speed;
   } else {
-    movingSpeedY = 0;
+    player1SpeedY = 0;
+  }
+
+  if (state.pressedKeys.space) {
+    player1SpeedX = player1SpeedX * 4;
+    player1SpeedY = player1SpeedY * 4;
   }
 }
 
-function updatePlayerPosition() {
-  playerX = Number.isNaN(playerX) ? 0 : playerX + movingSpeedX * secondsPassed;
-  playerY = Number.isNaN(playerY) ? 0 : playerY + movingSpeedY * secondsPassed;
+function updatePlayer1Position() {
+  player1X = Number.isNaN(player1X)
+    ? 0
+    : player1X + player1SpeedX * secondsPassed;
+  player1Y = Number.isNaN(player1Y)
+    ? 0
+    : player1Y + player1SpeedY * secondsPassed;
 
-  if (playerX < 0 + (hasLeftWall ? wallSize : 0)) {
-    playerX = hasLeftWall ? wallSize : 0;
+  if (player1X < 0 + (hasLeftWall ? wallSize : 0)) {
+    player1X = hasLeftWall ? wallSize : 0;
 
     if (!hasLeftWall) {
       hasTopWall = Math.random() < 0.5 ? false : true;
@@ -111,12 +164,15 @@ function updatePlayerPosition() {
       hasLeftWall = Math.random() < 0.5 ? false : true;
       hasRightWall = false;
 
-      playerX = canvas.width - playerSize - 2 - (hasRightWall ? wallSize : 0);
+      player1X = canvas.width - player1Size - 2 - (hasRightWall ? wallSize : 0);
     }
   }
 
-  if (playerX > canvas.width - playerSize - 1 - (hasRightWall ? wallSize : 0)) {
-    playerX = canvas.width - playerSize - 2 - (hasRightWall ? wallSize : 0);
+  if (
+    player1X >
+    canvas.width - player1Size - 1 - (hasRightWall ? wallSize : 0)
+  ) {
+    player1X = canvas.width - player1Size - 2 - (hasRightWall ? wallSize : 0);
 
     if (!hasRightWall) {
       hasTopWall = Math.random() < 0.5 ? false : true;
@@ -124,12 +180,12 @@ function updatePlayerPosition() {
       hasLeftWall = false;
       hasRightWall = Math.random() < 0.5 ? false : true;
 
-      playerX = hasLeftWall ? wallSize : 0;
+      player1X = hasLeftWall ? wallSize : 0;
     }
   }
 
-  if (playerY < 0 + (hasTopWall ? wallSize : 0)) {
-    playerY = hasTopWall ? wallSize : 0;
+  if (player1Y < 0 + (hasTopWall ? wallSize : 0)) {
+    player1Y = hasTopWall ? wallSize : 0;
 
     if (!hasTopWall) {
       hasTopWall = Math.random() < 0.5 ? false : true;
@@ -137,9 +193,9 @@ function updatePlayerPosition() {
       hasLeftWall = Math.random() < 0.5 ? false : true;
       hasRightWall = Math.random() < 0.5 ? false : true;
 
-      playerY =
+      player1Y =
         canvas.height -
-        playerSize -
+        player1Size -
         informationHeight -
         2 -
         (hasBottomWall ? wallSize : 0);
@@ -147,16 +203,16 @@ function updatePlayerPosition() {
   }
 
   if (
-    playerY >
+    player1Y >
     canvas.height -
-      playerSize -
+      player1Size -
       informationHeight -
       1 -
       (hasBottomWall ? wallSize : 0)
   ) {
-    playerY =
+    player1Y =
       canvas.height -
-      playerSize -
+      player1Size -
       informationHeight -
       2 -
       (hasBottomWall ? wallSize : 0);
@@ -167,8 +223,170 @@ function updatePlayerPosition() {
       hasLeftWall = Math.random() < 0.5 ? false : true;
       hasRightWall = Math.random() < 0.5 ? false : true;
 
-      playerY = 0;
+      player1Y = 0;
     }
+  }
+}
+
+function updatePlayer2Speed() {
+  if (state.pressedKeys.q && state.pressedKeys.d) {
+    player2SpeedX = 0;
+  } else if (state.pressedKeys.q) {
+    player2SpeedX = -player2Speed;
+  } else if (state.pressedKeys.d) {
+    player2SpeedX = player2Speed;
+  } else {
+    player2SpeedX = 0;
+  }
+
+  if (state.pressedKeys.z && state.pressedKeys.s) {
+    player2SpeedY = 0;
+  } else if (state.pressedKeys.z) {
+    player2SpeedY = -player2Speed;
+  } else if (state.pressedKeys.s) {
+    player2SpeedY = player2Speed;
+  } else {
+    player2SpeedY = 0;
+  }
+
+  if (state.pressedKeys.a) {
+    player2SpeedX = player2SpeedX * 4;
+    player2SpeedY = player2SpeedY * 4;
+  }
+}
+
+function updatePlayer2Position() {
+  player2X = Number.isNaN(player2X)
+    ? 0
+    : player2X + player2SpeedX * secondsPassed;
+  player2Y = Number.isNaN(player2Y)
+    ? 0
+    : player2Y + player2SpeedY * secondsPassed;
+
+  if (player2X < 0 + (hasLeftWall ? wallSize : 0)) {
+    player2X = hasLeftWall ? wallSize : 0;
+
+    if (!hasLeftWall) {
+      hasTopWall = Math.random() < 0.5 ? false : true;
+      hasBottomWall = Math.random() < 0.5 ? false : true;
+      hasLeftWall = Math.random() < 0.5 ? false : true;
+      hasRightWall = false;
+
+      player2X = canvas.width - player2Size - 2 - (hasRightWall ? wallSize : 0);
+    }
+  }
+
+  if (
+    player2X >
+    canvas.width - player2Size - 1 - (hasRightWall ? wallSize : 0)
+  ) {
+    player2X = canvas.width - player2Size - 2 - (hasRightWall ? wallSize : 0);
+
+    if (!hasRightWall) {
+      hasTopWall = Math.random() < 0.5 ? false : true;
+      hasBottomWall = Math.random() < 0.5 ? false : true;
+      hasLeftWall = false;
+      hasRightWall = Math.random() < 0.5 ? false : true;
+
+      player2X = hasLeftWall ? wallSize : 0;
+    }
+  }
+
+  if (player2Y < 0 + (hasTopWall ? wallSize : 0)) {
+    player2Y = hasTopWall ? wallSize : 0;
+
+    if (!hasTopWall) {
+      hasTopWall = Math.random() < 0.5 ? false : true;
+      hasBottomWall = false;
+      hasLeftWall = Math.random() < 0.5 ? false : true;
+      hasRightWall = Math.random() < 0.5 ? false : true;
+
+      player2Y =
+        canvas.height -
+        player2Size -
+        informationHeight -
+        2 -
+        (hasBottomWall ? wallSize : 0);
+    }
+  }
+
+  if (
+    player2Y >
+    canvas.height -
+      player2Size -
+      informationHeight -
+      1 -
+      (hasBottomWall ? wallSize : 0)
+  ) {
+    player2Y =
+      canvas.height -
+      player2Size -
+      informationHeight -
+      2 -
+      (hasBottomWall ? wallSize : 0);
+
+    if (!hasBottomWall) {
+      hasTopWall = false;
+      hasBottomWall = Math.random() < 0.5 ? false : true;
+      hasLeftWall = Math.random() < 0.5 ? false : true;
+      hasRightWall = Math.random() < 0.5 ? false : true;
+
+      player2Y = 0;
+    }
+  }
+}
+
+function updateEnemyPosition() {
+  EnemyX = Number.isNaN(EnemyX) ? 0 : EnemyX + EnemySpeedX * secondsPassed;
+  EnemyY = Number.isNaN(EnemyY) ? 0 : EnemyY + EnemySpeedY * secondsPassed;
+
+  if (EnemyX < 0 + (hasLeftWall ? wallSize : 0)) {
+    EnemyX = hasLeftWall ? wallSize : 0;
+  }
+
+  if (EnemyX > canvas.width - EnemySize - 1 - (hasRightWall ? wallSize : 0)) {
+    EnemyX = canvas.width - EnemySize - 2 - (hasRightWall ? wallSize : 0);
+  }
+
+  if (EnemyY < 0 + (hasTopWall ? wallSize : 0)) {
+    EnemyY = hasTopWall ? wallSize : 0;
+  }
+
+  if (
+    EnemyY >
+    canvas.height -
+      EnemySize -
+      informationHeight -
+      1 -
+      (hasBottomWall ? wallSize : 0)
+  ) {
+    EnemyY =
+      canvas.height -
+      EnemySize -
+      informationHeight -
+      2 -
+      (hasBottomWall ? wallSize : 0);
+  }
+}
+
+function updateEnemySpeed() {
+  let directionX = Math.random() * 3;
+  let directionY = Math.random() * 3;
+
+  if (directionX < 1) {
+    EnemySpeedX = -EnemySpeed;
+  } else if (directionX < 2) {
+    EnemySpeedX = EnemySpeed;
+  } else {
+    EnemySpeedX = 0;
+  }
+
+  if (directionY < 1) {
+    EnemySpeedY = -EnemySpeed;
+  } else if (directionY < 2) {
+    EnemySpeedY = EnemySpeed;
+  } else {
+    EnemySpeedY = 0;
   }
 }
 
@@ -182,7 +400,7 @@ function draw() {
 
 // DRAW INFORMATION
 function drawInformation() {
-  ctx.fillStyle = "white";
+  ctx.fillStyle = "orange";
   ctx.fillRect(0, 0, canvas.width, informationHeight);
   //   ctx.strokeStyle = "black";
   //   ctx.strokeRect(0, 0, canvas.width, informationHeight);
@@ -218,13 +436,15 @@ function drawInformation_Time() {
 
 function drawInformation_Name() {
   let measure = ctx.measureText("Zelda");
-  ctx.fillText("Zelda", canvas.width - measure.width - 1, 22);
+  ctx.fillText("Zelda & Link", canvas.width - measure.width - 80, 22);
 }
 
 // DRAW GAME
 function drawGame() {
   drawWalls();
-  drawCharacter();
+  drawEnemy();
+  drawPlayer1();
+  drawPlayer2();
 }
 
 function drawWalls() {
@@ -275,25 +495,65 @@ function drawWalls() {
     );
 }
 
-function drawCharacter() {
-  console.log("drawCharacter");
+function drawEnemy() {
+  console.log("drawEnemy");
   drawCircle(
-    playerX + playerSize / 2 + 1,
-    informationHeight + playerY + playerSize / 2 + 1,
-    playerSize / 2,
+    EnemyX + EnemySize / 2 + 1,
+    informationHeight + EnemyY + EnemySize / 2 + 1,
+    EnemySize / 2,
+    "red",
+    2,
+    "red"
+  );
+  ctx.fillStyle = "black";
+  ctx.fillText(
+    "boko",
+    EnemyX + EnemySize / 3 + 1 - 12 / 2,
+    informationHeight + EnemyY + EnemySize / 2 + 1 + 12 / 2
+  );
+}
+
+function drawPlayer1() {
+  console.log("drawPlayer1");
+  drawCircle(
+    player1X + player1Size / 2 + 1,
+    informationHeight + player1Y + player1Size / 2 + 1,
+    player1Size / 2,
     "black",
     2,
     "white"
   );
   ctx.fillStyle = "black";
   ctx.fillText(
-    "Z",
-    playerX + playerSize / 2 + 1 - 12 / 2,
-    informationHeight + playerY + playerSize / 2 + 1 + 12 / 2
+    "Zelda",
+    player1X + player1Size / 4 + 1 - 12 / 2,
+    informationHeight + player1Y + player1Size / 2 + 1 + 12 / 2
+  );
+}
+
+function drawPlayer2() {
+  console.log("drawPlayer2");
+  drawCircle(
+    player2X + player2Size / 2 + 1,
+    informationHeight + player2Y + player2Size / 2 + 1,
+    player2Size / 2,
+    "white",
+    // skyBlue
+    2,
+    "black"
+    // blue
+  );
+  ctx.fillStyle = "white";
+  // skyBlue
+  ctx.fillText(
+    "Link",
+    player2X + player2Size / 3 + 1 - 12 / 2,
+    informationHeight + player2Y + player2Size / 2 + 1 + 12 / 2
   );
 }
 
 // DRAW FUNCTIONS
+
 function resizeCanvasToDisplaySize() {
   // Lookup the size the browser is displaying the canvas in CSS pixels.
   const displayWidth = canvas.clientWidth;
