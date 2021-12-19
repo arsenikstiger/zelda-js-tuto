@@ -37,6 +37,7 @@ let state = {
     right: false,
     up: false,
     down: false,
+    space: false
   },
 };
 
@@ -45,6 +46,7 @@ let keyMap = {
   37: "left",
   38: "up",
   40: "down",
+  27: "space",
 };
 
 window.addEventListener("keydown", keydown, false);
