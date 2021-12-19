@@ -37,7 +37,7 @@ let state = {
     right: false,
     up: false,
     down: false,
-    space: false
+    space: false,
   },
 };
 
@@ -93,7 +93,6 @@ function updatePlayerSpeed() {
     movingSpeedY = -movingSpeed;
   } else if (state.pressedKeys.down) {
     movingSpeedY = movingSpeed;
-    console.log("TEST");
   } else {
     movingSpeedY = 0;
   }
@@ -212,6 +211,7 @@ function drawInformation_Time() {
     ("0" + today.getMinutes()).slice(-2) +
     ":" +
     ("0" + today.getSeconds()).slice(-2);
+
   let measure = ctx.measureText(time);
   ctx.fillText(time, canvas.width / 2 - measure.width / 2, 22);
 }
@@ -228,7 +228,7 @@ function drawGame() {
 }
 
 function drawWalls() {
-  console.log("drawCharacter");
+  console.log("drawWalls");
   // TOP
   if (hasTopWall)
     drawRectangle(
