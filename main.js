@@ -11,9 +11,15 @@ let playerX = 0;
 let playerY = 0;
 let playerSize = 100;
 
-let movingSpeed = 200;
-let movingSpeedX = 0;
-let movingSpeedY = 0;
+let playerSpeed = 200;
+let playerSpeedX = 0;
+let playerSpeedY = 0;
+
+let playerDirectionX = 0;
+let playerDirectionY = -1;
+
+let playerCostumeX = 0;
+let playerCostumeY = 0;
 
 let bulletX = 0;
 let bulletY = 0;
@@ -31,11 +37,18 @@ let hasRightWall = true;
 
 let wallStrokeColor = "transparent";
 let wallFillColor = "brown";
-let wallSize = 20;
+let wallSize = 100;
 
 let secondsPassed;
-let oldtimestamp;
+let currentTimestamp;
+let lastTimestamp;
 let fps;
+
+let spriteOutside;
+let spritePlayer;
+
+let costumeDurationMilliseconds = 300
+let costumeStartedAt = 0;
 
 let state = {
   pressedKeys: {
@@ -55,58 +68,105 @@ let keyMap = {
   32: "space",
 };
 
-window.addEventListener("keydown", keydown, false);
-window.addEventListener("keyup", keyup, false);
-// The proper game loop
-window.requestAnimationFrame(gameLoop);
+initialize();
+
+function initialize() {
+  spriteOutside = initSpriteFromUrl(
+    "assets/spritesheets/outside.png",
+    9,
+    7
+  );
+  spritePlayer = initSpriteFromUrl(
+    "assets/spritesheets/player2.png",
+    2,
+    4
+  );
+
+  window.addEventListener("keydown", keydown, false);
+  window.addEventListener("keyup", keyup, false);
+  window.requestAnimationFrame(gameLoop);
+}
 
 function gameLoop(timestamp) {
-  update(timestamp);
+  currentTimestamp = timestamp;
+
+  update();
   draw();
 
   // Keep requesting new frames
   window.requestAnimationFrame(gameLoop);
 }
 
-function update(timestamp) {
-  updateSecondsPassed(timestamp);
+function update() {
+  debugger;
+
+  updateSecondsPassed();
   updatePlayerSpeed();
+  updatePlayerDirection();
+  updatePlayerCostume();
   updatePlayerPosition();
 }
 
-function updateSecondsPassed(timestamp) {
+function updateSecondsPassed() {
   // Calculate the number of seconds passed since the last frame
-  secondsPassed = (timestamp - oldtimestamp) / 1000;
+  secondsPassed = (currentTimestamp - lastTimestamp) / 1000;
   // Move forward in time with a maximum amount
   //   secondsPassed = Math.min(secondsPassed, 0.1);
-  oldtimestamp = timestamp;
+  lastTimestamp = currentTimestamp;
 }
 
 function updatePlayerSpeed() {
   if (state.pressedKeys.left && state.pressedKeys.right) {
-    movingSpeedX = 0;
+    playerSpeedX = 0;
   } else if (state.pressedKeys.left) {
-    movingSpeedX = -movingSpeed;
+    playerSpeedX = -playerSpeed;
   } else if (state.pressedKeys.right) {
-    movingSpeedX = movingSpeed;
+    playerSpeedX = playerSpeed;
   } else {
-    movingSpeedX = 0;
+    playerSpeedX = 0;
   }
 
   if (state.pressedKeys.up && state.pressedKeys.down) {
-    movingSpeedY = 0;
+    playerSpeedY = 0;
   } else if (state.pressedKeys.up) {
-    movingSpeedY = -movingSpeed;
+    playerSpeedY = -playerSpeed;
   } else if (state.pressedKeys.down) {
-    movingSpeedY = movingSpeed;
+    playerSpeedY = playerSpeed;
   } else {
-    movingSpeedY = 0;
+    playerSpeedY = 0;
+  }
+}
+
+function updatePlayerDirection() {
+  playerDirectionX =
+    playerSpeedX === 0 ? 0 : playerSpeedX / Math.abs(playerSpeedX);
+  playerDirectionY =
+    playerSpeedY === 0 ? 0 : playerSpeedY / Math.abs(playerSpeedY);
+}
+
+function updatePlayerCostume() {
+  if (currentTimestamp - costumeStartedAt > costumeDurationMilliseconds) {
+    playerCostumeX = !playerCostumeX;
+    costumeStartedAt = currentTimestamp;
+  }
+
+  if (playerDirectionY === -1) {
+    playerCostumeY = 0;
+  } else if (playerDirectionY === 1) {
+    playerCostumeY = 3;
+  } else if (playerDirectionX === -1) {
+    playerCostumeY = 1;
+  } else if (playerDirectionX === 1) {
+    playerCostumeY = 2;
+  } else {
+    playerCostumeX = 1;
+    playerCostumeY = 3;
   }
 }
 
 function updatePlayerPosition() {
-  playerX = Number.isNaN(playerX) ? 0 : playerX + movingSpeedX * secondsPassed;
-  playerY = Number.isNaN(playerY) ? 0 : playerY + movingSpeedY * secondsPassed;
+  playerX = Number.isNaN(playerX) ? 0 : playerX + playerSpeedX * secondsPassed;
+  playerY = Number.isNaN(playerY) ? 0 : playerY + playerSpeedY * secondsPassed;
 
   if (playerX < 0 + (hasLeftWall ? wallSize : 0)) {
     playerX = hasLeftWall ? wallSize : 0;
@@ -234,74 +294,91 @@ function drawGame() {
 }
 
 function drawWalls() {
-  console.log("drawWalls");
+  // console.log("drawWalls");
   // TOP
-  if (hasTopWall)
-    drawRectangle(
-      0,
-      informationHeight,
-      canvas.width,
-      informationHeight + wallSize,
-      wallStrokeColor,
-      1,
-      wallFillColor
-    );
+  if (hasTopWall) {
+    for (let wallX = 0; wallX < Math.trunc(canvas.width / wallSize) + 1; wallX++) {
+      drawSprite(
+        spriteOutside,
+        7,
+        2,
+        wallX * wallSize,
+        informationHeight,
+        wallSize,
+        wallSize
+      );
+    }
+  }
   // BOTTOM
-  if (hasBottomWall)
-    drawRectangle(
-      0,
-      canvas.height - wallSize,
-      canvas.width,
-      canvas.height,
-      wallStrokeColor,
-      1,
-      wallFillColor
-    );
+  if (hasBottomWall) {
+    for (
+      let wallX = 0;
+      wallX < Math.trunc(canvas.width / wallSize) + 1;
+      wallX++
+    ) {
+      drawSprite(
+        spriteOutside,
+        7,
+        2,
+        wallX * wallSize,
+        canvas.height - wallSize,
+        wallSize,
+        wallSize
+      );
+    }
+  }
   // LEFT
-  if (hasLeftWall)
-    drawRectangle(
-      0,
-      informationHeight,
-      0 + wallSize,
-      canvas.height,
-      wallStrokeColor,
-      1,
-      wallFillColor
-    );
+  if (hasLeftWall) {
+    for (
+      let wallY = 0;
+      wallY < Math.trunc((canvas.height - informationHeight) / wallSize) + 1;
+      wallY++
+    ) {
+      drawSprite(
+        spriteOutside,
+        7,
+        2,
+        0,
+        informationHeight + wallY * wallSize,
+        wallSize,
+        wallSize
+      );
+    }
+  }
   // RIGHT
-  if (hasRightWall)
-    drawRectangle(
-      canvas.width - wallSize,
-      informationHeight,
-      canvas.width,
-      canvas.height,
-      wallStrokeColor,
-      1,
-      wallFillColor
-    );
+  if (hasRightWall) {
+    for (
+      let wallY = 0;
+      wallY < Math.trunc((canvas.height - informationHeight) / wallSize) + 1;
+      wallY++
+    ) {
+      drawSprite(
+        spriteOutside,
+        7,
+        2,
+        canvas.width - wallSize,
+        informationHeight + wallY * wallSize,
+        wallSize,
+        wallSize
+      );
+    }
+  }
 }
 
 function drawCharacter() {
-  console.log("drawCharacter");
-  drawCircle(
-    playerX + playerSize / 2 + 1,
-    informationHeight + playerY + playerSize / 2 + 1,
-    playerSize / 2,
-    "black",
-    2,
-    "white"
-  );
-  ctx.fillStyle = "black";
-  ctx.fillText(
-    "Z",
-    playerX + playerSize / 2 + 1 - 12 / 2,
-    informationHeight + playerY + playerSize / 2 + 1 + 12 / 2
+  // console.log("drawCharacter");
+  drawSprite(
+    spritePlayer,
+    playerCostumeX,
+    playerCostumeY,
+    playerX,
+    informationHeight + playerY,
+    playerSize,
+    playerSize
   );
 }
 
-function drawBullet() {
-
-}
+function drawBullet() {}
 
 // DRAW FUNCTIONS
 function resizeCanvasToDisplaySize() {
@@ -323,7 +400,7 @@ function resizeCanvasToDisplaySize() {
 }
 
 function clearScreen() {
-  console.log("clearScreen");
+  // console.log("clearScreen");
   ctx.fillStyle = "green";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
@@ -338,7 +415,7 @@ function drawCircle(
   mustStroke = true,
   mustFill = true
 ) {
-  console.log("drawCircle");
+  // console.log("drawCircle");
   ctx.strokeStyle = strokeColor;
   ctx.lineWidth = strokeWidth;
   ctx.fillStyle = fillColor;
@@ -360,7 +437,7 @@ function drawLine(
   mustStroke = true,
   mustFill = true
 ) {
-  console.log("drawLine");
+  // console.log("drawLine");
   ctx.strokeStyle = strokeColor;
   ctx.lineWidth = strokeWidth;
   ctx.fillStyle = fillColor;
@@ -383,12 +460,62 @@ function drawRectangle(
   mustStroke = true,
   mustFill = true
 ) {
-  console.log("drawRectangle");
+  // console.log("drawRectangle");
   ctx.strokeStyle = strokeColor;
   ctx.lineWidth = strokeWidth;
   ctx.fillStyle = fillColor;
   if (mustStroke) ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
   if (mustFill) ctx.fillRect(x1, y1, x2 - x1, y2 - y1);
+}
+
+function initImageFromUrl(url) {
+  let img = {};
+  img = new Image();
+  img.src = url;
+
+  return img;
+}
+
+function drawImage(img, x, y, width = 0, height = 0) {
+  ctx.drawImage(
+    img,
+    x,
+    y,
+    width === 0 ? img.width : width,
+    height === 0 ? img.height : height
+  );
+}
+
+function initSpriteFromUrl(url, columnCount, rowCount) {
+  let sprite = {};
+  sprite.img = new Image();
+
+  sprite.img.onload = function () {
+    // Define the size of a frame
+    sprite.frameWidth = sprite.img.width / columnCount;
+    sprite.frameHeight = (sprite.img.height) / rowCount;
+  };
+
+  sprite.img.src = url;
+
+  sprite.columnCount = columnCount;
+  sprite.rowCount = rowCount;
+
+  return sprite;
+}
+
+function drawSprite(sprite, column, row, x, y, width = 0, height = 0) {
+  ctx.drawImage(
+    sprite.img,
+    column * sprite.frameWidth,
+    row * sprite.frameHeight,
+    sprite.frameWidth,
+    sprite.frameHeight,
+    x,
+    y,
+    width === 0 ? sprite.frameWidth : width,
+    height === 0 ? sprite.frameHeight : height
+  );
 }
 
 // INPUT FUNCTIONS
