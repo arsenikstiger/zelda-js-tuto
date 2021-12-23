@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "rootDir": "./client/src",
+    "outDir": "./client/dist",
+    "target": "es6",
+    "module": "es6",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "declaration": true,
+    "baseUrl": ".",
+    "paths": {
+      "*": ["node_modules/*", "./client/src/types/*"]
+    },
+  },
+  "include": ["client/src/**/*"]
+}

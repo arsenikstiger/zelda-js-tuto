@@ -47,7 +47,7 @@ let fps;
 let spriteOutside;
 let spritePlayer;
 
-let costumeDurationMilliseconds = 300
+let costumeDurationMilliseconds = 300;
 let costumeStartedAt = 0;
 
 let state = {

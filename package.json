@@ -1,0 +1,69 @@
+{
+  "name": "zelda-js-tuto",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://github.com/arsenikstiger/zelda-js-tuto#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arsenikstiger/zelda-js-tuto.git"
+  },
+  "bugs": {
+    "url": "https://github.com/arsenikstiger/zelda-js-tuto/issues"
+  },
+  "scripts": {
+    "debug": "npm run build && npm run watch-debug",
+    "start": "npm run serve",
+    "serve": "node server/src/server.mjs",
+    "serve-debug": "nodemon --inspect server/src/server.mjs",
+    "build": " npm run build-types && npm run lint",
+    "build-types": "tsc",
+    "build-js": "babel client/src --out-dir client/dist --extensions \".ts,.tsx\" --source-maps inline",
+    "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
+    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-types\" \"npm run watch-node\"",
+    "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-types\" \"npm run serve-debug\"",
+    "watch-node": "nodemon server/src/server.mjs",
+    "watch-test": "npm run test -- --watchAll",
+    "watch-types": "tsc -w",
+    "watch-js": "babel client/src --out-dir client/dist --extensions \".ts,.tsx\" --source-maps inline -w"
+  },
+  "browserslist": "> 0.25%, not dead",
+  "dependencies": {
+    "async": "3.2.0",
+    "body-parser": "1.19.0",
+    "compression": "1.7.4",
+    "errorhandler": "1.5.1",
+    "express": "4.17.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.16.0",
+    "@babel/core": "^7.16.5",
+    "@babel/plugin-proposal-class-properties": "^7.16.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.16.5",
+    "@babel/preset-env": "^7.16.5",
+    "@babel/preset-typescript": "^7.16.5",
+    "@types/async": "3.2.5",
+    "@types/body-parser": "1.19.0",
+    "@types/chai": "4.2.14",
+    "@types/compression": "1.7.0",
+    "@types/concurrently": "5.2.1",
+    "@types/errorhandler": "1.5.0",
+    "@types/eslint": "7.2.6",
+    "@types/express": "4.17.11",
+    "@types/jest": "^26.0.23",
+    "@types/node": "14.14.25",
+    "@types/request": "2.48.5",
+    "@types/request-promise": "4.1.47",
+    "@typescript-eslint/eslint-plugin": "4.14.2",
+    "@typescript-eslint/parser": "4.14.2",
+    "concurrently": "6.0.2",
+    "eslint": "7.19.0",
+    "jest": "^27.0.6",
+    "nodemon": "^2.0.7",
+    "sass": "1.32.6",
+    "ts-jest": "^27.0.3",
+    "ts-node": "9.1.1",
+    "typescript": "4.1.3"
+  }
+}
