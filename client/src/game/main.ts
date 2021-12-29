@@ -88,7 +88,7 @@ function update(deltaTime: number, totalTime: number) {
 
 function draw(context: CanvasRenderingContext2D) {
   DrawHelper.resizeCanvasToDisplaySize(canvas);
-  DrawHelper.clearScreen(canvas, context, "green");
+  context.clearRect(0, 0, canvas.width, canvas.height);
 
   for (const child of children) {
     if (child instanceof DrawableGameObject) child.draw(context);
