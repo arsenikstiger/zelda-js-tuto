@@ -1,8 +1,12 @@
+import GameManager from "./managers/GameManager.js";
+
 let canvas: HTMLCanvasElement;
 let context: CanvasRenderingContext2D;
 let totalTime: number;
 let lastTimestamp: number;
 let deltaTime: number;
+
+let gameManager: GameManager;
 
 initialize();
 
@@ -20,6 +24,12 @@ function initialize() {
 
   // window.addEventListener("keydown", keydown, false);
   // window.addEventListener("keyup", keyup, false);
+  lastTimestamp = 0;
+  totalTime = 0;
+
+  gameManager = new GameManager();
+  gameManager.initialize();
+
   window.requestAnimationFrame(gameLoop);
 }
 
@@ -36,10 +46,11 @@ function gameLoop(timestamp: number) {
 }
 
 function update(deltaTime: number, totalTime: number) {
-  console.log(deltaTime);
+  gameManager.update(deltaTime, totalTime);
 }
 
 function draw(context: CanvasRenderingContext2D) {
   // DrawHelper.resizeCanvasToDisplaySize(canvas);
   context.clearRect(0, 0, canvas.width, canvas.height);
+  gameManager.draw(context);
 }
