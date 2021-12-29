@@ -43,13 +43,15 @@ let EnemySpeedY = 0;
 let screenX = 0;
 let screenY = 0;
 
+let backgroundRects = [];
+
 let hasTopWall = false;
 let hasBottomWall = true;
 let hasLeftWall = true;
 let hasRightWall = true;
 
-let wallStrokeColor = "transparent";
-let wallFillColor = "brown";
+let wallStrokeColor = "darkBlue";
+let wallFillColor = "lightGray";
 let wallSize = 20;
 
 let secondsPassed;
@@ -499,15 +501,15 @@ function drawEnemy() {
   console.log("drawEnemy");
   drawCircle(
     EnemyX + EnemySize / 2 + 1,
-    informationHeight + EnemyY + EnemySize / 2 + 1,
+    informationHeight + EnemyY + EnemySize / 2 + 3.5,
     EnemySize / 2,
-    "red",
+    "purple",
     2,
-    "red"
+    "magenta"
   );
   ctx.fillStyle = "black";
   ctx.fillText(
-    "boko",
+    "octo",
     EnemyX + EnemySize / 3 + 1 - 12 / 2,
     informationHeight + EnemyY + EnemySize / 2 + 1 + 12 / 2
   );
@@ -521,7 +523,7 @@ function drawPlayer1() {
     player1Size / 2,
     "black",
     2,
-    "white"
+    "yellow"
   );
   ctx.fillStyle = "black";
   ctx.fillText(
@@ -537,13 +539,13 @@ function drawPlayer2() {
     player2X + player2Size / 2 + 1,
     informationHeight + player2Y + player2Size / 2 + 1,
     player2Size / 2,
-    "white",
+    "black",
     // skyBlue
     2,
-    "black"
+    "darkGreen"
     // blue
   );
-  ctx.fillStyle = "white";
+  ctx.fillStyle = "black";
   // skyBlue
   ctx.fillText(
     "Link",
@@ -574,9 +576,41 @@ function resizeCanvasToDisplaySize() {
 
 function clearScreen() {
   console.log("clearScreen");
-  ctx.fillStyle = "green";
+
+  ctx.fillStyle = "Green";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-}
+
+  // if (backgroundRects.length === 0) {
+
+  //   // for (let y = 0; y < canvas.height; y = y + 40 + Math.random() * 40) {
+    //   let vagueFrequency = 30 + Math.random() * 20;
+    //   let vagueIntensity = 10 + Math.random() * 10;
+    //   // darked = !darked;
+    //   for (let x = 0; x < canvas.width; x++) {
+    //     let darked = Math.round(Math.random())
+    //     let color = darked ? "red" : "orange";
+
+  //       let item = {
+  //         x,
+  //         y: y + Math.cos(x / vagueFrequency) * vagueIntensity,
+  //         width: 1,
+  //         height: 3,
+  //         color
+  //       };
+  //       backgroundRects.push(item);
+  //     }
+  //   }
+  // // }
+  // for (let i = 0; i < backgroundRects.length; i++) {
+  //   ctx.fillStyle = backgroundRects[i].color;
+  //   ctx.fillRect(
+  //     backgroundRects[i].x,
+  //     backgroundRects[i].y,
+  //     backgroundRects[i].width,
+  //     backgroundRects[i].height
+    // );
+  }
+// }
 
 function drawCircle(
   x,
