@@ -1,4 +1,5 @@
 import DrawHelper from "../helpers/DrawHelper.js";
+import level1 from "./levels/level1.json"
 
 export default class Level implements GameObject {
   public name: string;
@@ -23,7 +24,8 @@ export default class Level implements GameObject {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  public initialize(): void {}
+  public initialize(): void {
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   public update(deltaTime: number, totalTime: number): void {}

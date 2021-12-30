@@ -1,0 +1,14 @@
+{ "columns":15,
+ "image":"RPG Nature Tileset Autumn.png",
+ "imageheight":288,
+ "imagewidth":480,
+ "margin":0,
+ "name":"RPG Nature Tileset Autumn",
+ "spacing":0,
+ "tilecount":135,
+ "tiledversion":"1.7.2",
+ "tileheight":32,
+ "tilewidth":32,
+ "type":"tileset",
+ "version":"1.6"
+}
