@@ -12,7 +12,7 @@ export default class GameManager implements GameObject {
     this.keyManager = new KeyManager();
     await this.keyManager.initialize();
 
-    this.level = new Level("Début de l'histoire", 200, 200, "green");
+    this.level = new Level("level2", 200, 200, "green");
     await this.level.initialize();
 
     this.player = new Player("As", 3, 0, 0, 16, 16, 50);

@@ -1,6 +1,7 @@
 import MovableBase from "../abstracts/MovableBase.js";
 import Sprite from "./base/Sprite.js";
 import SpriteSheet from "./base/SpriteSheet.js";
+import LevelData from "./LevelData.js";
 
 export default class Player extends MovableBase implements GameObject {
   public name: string;

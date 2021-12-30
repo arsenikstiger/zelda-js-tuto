@@ -1,4 +1,5 @@
 import DrawHelper from "../helpers/DrawHelper.js";
+import LevelData from "./LevelData.js";
 
 export default class Level implements GameObject {
   public name: string;
@@ -23,7 +24,10 @@ export default class Level implements GameObject {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  public async initialize(): Promise<void> {}
+  public async initialize(): Promise<void> {
+    const response = await window.fetch(`/levels/${this.name}.json`);
+    const levelData = await (response.json() as Promise<LevelData>);
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   public async update(deltaTime: number, totalTime: number): Promise<void> {}

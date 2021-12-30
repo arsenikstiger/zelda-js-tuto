@@ -10,7 +10,7 @@ let gameManager: GameManager;
 
 initialize();
 
-function initialize() {
+async function initialize() {
   canvas = document.getElementById("canvas") as HTMLCanvasElement;
   const _context: CanvasRenderingContext2D | null = canvas.getContext("2d");
 
@@ -28,7 +28,7 @@ function initialize() {
   totalTime = 0;
 
   gameManager = new GameManager();
-  gameManager.initialize();
+  await gameManager.initialize();
 
   window.requestAnimationFrame(async (timestamp) => await gameLoop(timestamp));
 }
