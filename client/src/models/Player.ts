@@ -35,17 +35,17 @@ export default class Player extends MovableBase implements GameObject {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  public initialize(): void {
+  public async initialize(): Promise<void> {
     this.playerSpriteSheet = new SpriteSheet("spritesheets/player2.png", 2, 4);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  public update(deltaTime: number, totalTime: number): void {
-    super.update(deltaTime, totalTime);
+  public async update(deltaTime: number, totalTime: number): Promise<void> {
+    await super.update(deltaTime, totalTime);
     this.playerSprite = new Sprite(this.playerSpriteSheet, 1, 3);
   }
 
-  public draw(context: CanvasRenderingContext2D): void {
-    this.playerSprite.draw(context, this.x, this.y, this.width, this.height);
+  public async draw(context: CanvasRenderingContext2D): Promise<void> {
+    await this.playerSprite.draw(context, this.x, this.y, this.width, this.height);
   }
 }

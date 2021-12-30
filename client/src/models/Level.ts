@@ -1,5 +1,4 @@
 import DrawHelper from "../helpers/DrawHelper.js";
-import level1 from "./levels/level1.json"
 
 export default class Level implements GameObject {
   public name: string;
@@ -24,13 +23,23 @@ export default class Level implements GameObject {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  public initialize(): void {
-  }
+  public async initialize(): Promise<void> {}
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  public update(deltaTime: number, totalTime: number): void {}
+  public async update(deltaTime: number, totalTime: number): Promise<void> {}
 
-  public draw(context: CanvasRenderingContext2D): void {
-    DrawHelper.drawRectangle(context, 0, 0, this.width, this.height, this.color, 1, this.color, false, true);
+  public async draw(context: CanvasRenderingContext2D): Promise<void> {
+    DrawHelper.drawRectangle(
+      context,
+      0,
+      0,
+      this.width,
+      this.height,
+      this.color,
+      1,
+      this.color,
+      false,
+      true
+    );
   }
 }

@@ -14,7 +14,7 @@ export default abstract class MovableBase implements Movable {
     this.setSpeed(speed);
   }
 
-  public setPosition(x: number, y: number): void {
+  public async setPosition(x: number, y: number): Promise<void> {
     this.x = x;
     this.y = y;
     this.futureX = x;
@@ -27,26 +27,26 @@ export default abstract class MovableBase implements Movable {
 
   public moveUp(deltaTime: number): void {
     this.speedY = -this.speed;
-    this.futureY = this.y + this.speedY * deltaTime / 1000;
+    this.futureY = this.y + (this.speedY * deltaTime) / 1000;
   }
 
   public moveDown(deltaTime: number): void {
     this.speedY = this.speed;
-    this.futureY = this.y + this.speedY * deltaTime / 1000;
+    this.futureY = this.y + (this.speedY * deltaTime) / 1000;
   }
 
   public moveLeft(deltaTime: number): void {
     this.speedX = -this.speed;
-    this.futureX = this.x + this.speedX * deltaTime / 1000;
+    this.futureX = this.x + (this.speedX * deltaTime) / 1000;
   }
 
   public moveRight(deltaTime: number): void {
     this.speedX = this.speed;
-    this.futureX = this.x + this.speedX * deltaTime / 1000;
+    this.futureX = this.x + (this.speedX * deltaTime) / 1000;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public update(deltaTime: number, totalTime: number): void {
+  public async update(deltaTime: number, totalTime: number): Promise<void> {
     this.x = this.futureX;
     this.y = this.futureY;
 

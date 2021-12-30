@@ -8,29 +8,29 @@ export default class GameManager implements GameObject {
   public player: Player;
   public tag: string;
 
-  public initialize(): void {
+  public async initialize(): Promise<void> {
     this.keyManager = new KeyManager();
-    this.keyManager.initialize();
+    await this.keyManager.initialize();
 
     this.level = new Level("Début de l'histoire", 200, 200, "green");
-    this.level.initialize();
+    await this.level.initialize();
 
     this.player = new Player("As", 3, 0, 0, 16, 16, 50);
-    this.player.initialize();
+    await this.player.initialize();
   }
 
-  public update(deltaTime: number, totalTime: number): void {
+  public async update(deltaTime: number, totalTime: number): Promise<void> {
     if (this.keyManager.up) this.player.moveUp(deltaTime);
     if (this.keyManager.down) this.player.moveDown(deltaTime);
     if (this.keyManager.left) this.player.moveLeft(deltaTime);
     if (this.keyManager.right) this.player.moveRight(deltaTime);
 
-    this.level.update(deltaTime, totalTime);
-    this.player.update(deltaTime, totalTime);
+    await this.level.update(deltaTime, totalTime);
+    await this.player.update(deltaTime, totalTime);
   }
 
-  public draw(context: CanvasRenderingContext2D): void {
-    this.level.draw(context);
-    this.player.draw(context);
+  public async draw(context: CanvasRenderingContext2D): Promise<void> {
+    await this.level.draw(context);
+    await this.player.draw(context);
   }
 }

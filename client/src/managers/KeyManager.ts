@@ -5,6 +5,14 @@ export default class KeyManager {
   public down: boolean;
   public space: boolean;
 
+  public static keyMap: Record<number, string> = {
+    39: "right",
+    37: "left",
+    38: "up",
+    40: "down",
+    32: "space",
+  };
+  
   constructor() {
     this.left = false;
     this.right = false;
@@ -13,7 +21,7 @@ export default class KeyManager {
     this.space = false;
   }
 
-  public initialize(): void {
+  public async initialize(): Promise<void> {
     window.addEventListener(
       "keydown",
       (event) => KeyManager.keydown(event, this),
@@ -24,14 +32,6 @@ export default class KeyManager {
       (event) => KeyManager.keyup(event, this),
       false
     );
-  }
-
-  public static keyMap: Record<number, string> = {
-    39: "right",
-    37: "left",
-    38: "up",
-    40: "down",
-    32: "space",
   }
 
   private static keydown(event: KeyboardEvent, keyManager: KeyManager): void {

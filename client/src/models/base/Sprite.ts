@@ -5,17 +5,19 @@ export default class Sprite {
   public column: number;
   public row: number;
 
-  constructor(
-    spriteSheet: SpriteSheet,
-    column: number,
-    row: number
-  ) {
+  constructor(spriteSheet: SpriteSheet, column: number, row: number) {
     this.spriteSheet = spriteSheet;
     this.column = column;
     this.row = row;
   }
 
-  public draw(context: CanvasRenderingContext2D, x: number, y: number, width: number = 0, height: number = 0): void {   
+  public async draw(
+    context: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    width: number = 0,
+    height: number = 0
+  ): Promise<void> {
     this.spriteSheet.drawSprite(
       context,
       this.column,

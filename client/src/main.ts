@@ -30,27 +30,27 @@ function initialize() {
   gameManager = new GameManager();
   gameManager.initialize();
 
-  window.requestAnimationFrame(gameLoop);
+  window.requestAnimationFrame(async (timestamp) => await gameLoop(timestamp));
 }
 
-function gameLoop(timestamp: number) {
+async function gameLoop(timestamp: number) {
   deltaTime = timestamp - lastTimestamp;
   totalTime = totalTime + deltaTime;
   lastTimestamp = totalTime;
 
-  update(deltaTime, totalTime);
-  draw(context);
+  await update(deltaTime, totalTime);
+  await draw(context);
 
   // Keep requesting new frames
-  window.requestAnimationFrame(gameLoop);
+  window.requestAnimationFrame(async (timestamp) => await gameLoop(timestamp));
 }
 
-function update(deltaTime: number, totalTime: number) {
-  gameManager.update(deltaTime, totalTime);
+async function update(deltaTime: number, totalTime: number) {
+  await gameManager.update(deltaTime, totalTime);
 }
 
-function draw(context: CanvasRenderingContext2D) {
+async function draw(context: CanvasRenderingContext2D) {
   // DrawHelper.resizeCanvasToDisplaySize(canvas);
   context.clearRect(0, 0, canvas.width, canvas.height);
-  gameManager.draw(context);
+  await gameManager.draw(context);
 }

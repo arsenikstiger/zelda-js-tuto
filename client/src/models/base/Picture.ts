@@ -7,7 +7,7 @@ export default class Picture {
     this.img.src = url;
   }
 
-  public draw(context: CanvasRenderingContext2D, x: number, y: number, width: number = 0, height: number = 0): void {
+  public async draw(context: CanvasRenderingContext2D, x: number, y: number, width: number = 0, height: number = 0): Promise<void> {
     context.drawImage(
       this.img,
       x,
