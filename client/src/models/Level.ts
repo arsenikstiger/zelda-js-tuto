@@ -29,7 +29,7 @@ export default class Level implements GameObject {
     this.name = name;
   }
 
-  public async initialize(): Promise<void> {
+  public async initialize(context: CanvasRenderingContext2D): Promise<void> {
     const response = await window.fetch(`/levels/${this.name}.json`);
     this.levelData = await (response.json() as Promise<LevelData>);
 
@@ -83,7 +83,10 @@ export default class Level implements GameObject {
     this.drawLayer(context, this.breakableData);
   }
 
-  private async drawLayer(context: CanvasRenderingContext2D, layerData: number[]) {
+  private async drawLayer(
+    context: CanvasRenderingContext2D,
+    layerData: number[]
+  ) {
     for (let i = 0; i < layerData.length; i++) {
       const tileNumber = i;
       const tileColumn = tileNumber % this.columnCount;

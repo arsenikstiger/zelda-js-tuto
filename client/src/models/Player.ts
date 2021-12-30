@@ -36,7 +36,7 @@ export default class Player extends MovableBase implements GameObject {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  public async initialize(): Promise<void> {
+  public async initialize(context: CanvasRenderingContext2D): Promise<void> {
     this.playerSpriteSheet = new SpriteSheet("spritesheets/player2.png", 2, 4);
   }
 
@@ -47,6 +47,12 @@ export default class Player extends MovableBase implements GameObject {
   }
 
   public async draw(context: CanvasRenderingContext2D): Promise<void> {
-    await this.playerSprite.draw(context, this.x, this.y, this.width, this.height);
+    await this.playerSprite.draw(
+      context,
+      this.x,
+      this.y,
+      this.width,
+      this.height
+    );
   }
 }

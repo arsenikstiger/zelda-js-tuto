@@ -12,7 +12,7 @@ export default class KeyManager {
     40: "down",
     32: "space",
   };
-  
+
   constructor() {
     this.left = false;
     this.right = false;
@@ -21,7 +21,7 @@ export default class KeyManager {
     this.space = false;
   }
 
-  public async initialize(): Promise<void> {
+  public async initialize(context: CanvasRenderingContext2D): Promise<void> {
     window.addEventListener(
       "keydown",
       (event) => KeyManager.keydown(event, this),

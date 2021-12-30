@@ -24,7 +24,7 @@ async function initialize() {
   totalTime = 0;
 
   gameManager = new GameManager();
-  await gameManager.initialize();
+  await gameManager.initialize(context);
 
   window.requestAnimationFrame(async (timestamp) => await gameLoop(timestamp));
 }

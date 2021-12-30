@@ -9,15 +9,18 @@ export default class GameManager implements GameObject {
   public player: Player;
   public tag: string;
 
-  public async initialize(): Promise<void> {
+  public async initialize(context: CanvasRenderingContext2D): Promise<void> {
     this.keyManager = new KeyManager();
-    await this.keyManager.initialize();
+    await this.keyManager.initialize(context);
 
     this.level = new Level("level2");
-    await this.level.initialize();
+    await this.level.initialize(context);
 
     this.player = new Player("As", 3, 0, 0, 16, 16, 50);
-    await this.player.initialize();
+    await this.player.initialize(context);
+
+    context.canvas.width = this.level.width;
+    context.canvas.height = this.level.height;
   }
 
   public async update(deltaTime: number, totalTime: number): Promise<void> {
@@ -31,9 +34,6 @@ export default class GameManager implements GameObject {
   }
 
   public async draw(context: CanvasRenderingContext2D): Promise<void> {
-    context.canvas.width = this.level.width;
-    context.canvas.height = this.level.height;
-    
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
     await this.level.draw(context);

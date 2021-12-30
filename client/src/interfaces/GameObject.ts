@@ -1,7 +1,7 @@
 interface GameObject {
   tag: string;
 
-  initialize: () => void;
+  initialize: (context: CanvasRenderingContext2D) => void;
   update: (deltaTime: number, totalTime: number) => void;
   draw: (context: CanvasRenderingContext2D) => void;
 }
