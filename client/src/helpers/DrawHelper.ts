@@ -1,20 +1,26 @@
 export default class DrawHelper {
-  public static resizeCanvasToDisplaySize(canvas: HTMLCanvasElement): boolean {
-    // Lookup the size the browser is displaying the canvas in CSS pixels.
-    const displayWidth = canvas.clientWidth;
-    const displayHeight = canvas.clientHeight;
+  public static resizeCanvasToDisplaySize(
+    canvas: HTMLCanvasElement,
+    gameWidth: number,
+    gameHeight: number
+  ): void {
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
 
     // Check if the canvas is not the same size.
     const needResize =
-      canvas.width !== displayWidth || canvas.height !== displayHeight;
+      canvas.style.width !== windowWidth + "px" ||
+      canvas.style.height !== windowHeight + "px";
 
     if (needResize) {
+      canvas.width = gameWidth;
+      canvas.height = gameHeight;
       // Make the canvas the same size
-      canvas.width = displayWidth;
-      canvas.height = displayHeight;
+      if (gameWidth > gameHeight && windowWidth > windowHeight) {
+        canvas.style.width = windowWidth + "px";
+        canvas.style.height = (windowHeight * gameHeight) / gameWidth + "px";
+      }
     }
-
-    return needResize;
   }
 
   public static clearScreen(

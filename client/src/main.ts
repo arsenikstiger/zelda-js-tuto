@@ -20,10 +20,6 @@ async function initialize() {
   context.imageSmoothingEnabled = true;
   context.imageSmoothingQuality = "high";
 
-  // DrawHelper.resizeCanvasToDisplaySize(canvas);
-
-  // window.addEventListener("keydown", keydown, false);
-  // window.addEventListener("keyup", keyup, false);
   lastTimestamp = 0;
   totalTime = 0;
 
@@ -50,7 +46,5 @@ async function update(deltaTime: number, totalTime: number) {
 }
 
 async function draw(context: CanvasRenderingContext2D) {
-  // DrawHelper.resizeCanvasToDisplaySize(canvas);
-  context.clearRect(0, 0, canvas.width, canvas.height);
   await gameManager.draw(context);
 }
