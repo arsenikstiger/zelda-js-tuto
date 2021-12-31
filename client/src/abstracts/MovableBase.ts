@@ -1,9 +1,23 @@
+import Movable from "../interfaces/Movable";
+
 export default abstract class MovableBase implements Movable {
   public x: number;
   public y: number;
 
-  public futureX: number;
-  public futureY: number;
+  protected _futureX: number;
+  public get futureX(): number {
+    return this._futureX;
+  }
+  public set futureX(value: number) {
+    this._futureX = value;
+  }
+  protected _futureY: number;
+  public get futureY(): number {
+    return this._futureY;
+  }
+  public set futureY(value: number) {
+    this._futureY = value;
+  }
 
   public speed: number;
   public speedX: number;
@@ -27,22 +41,27 @@ export default abstract class MovableBase implements Movable {
 
   public moveUp(deltaTime: number): void {
     this.speedY = -this.speed;
-    this.futureY = this.y + (this.speedY * deltaTime) / 1000;
+    this.futureY = Math.round(this.y + (this.speedY * deltaTime) / 1000);
   }
 
   public moveDown(deltaTime: number): void {
     this.speedY = this.speed;
-    this.futureY = this.y + (this.speedY * deltaTime) / 1000;
+    this.futureY = Math.round(this.y + (this.speedY * deltaTime) / 1000);
   }
 
   public moveLeft(deltaTime: number): void {
     this.speedX = -this.speed;
-    this.futureX = this.x + (this.speedX * deltaTime) / 1000;
+    this.futureX = Math.round(this.x + (this.speedX * deltaTime) / 1000);
   }
 
   public moveRight(deltaTime: number): void {
     this.speedX = this.speed;
-    this.futureX = this.x + (this.speedX * deltaTime) / 1000;
+    this.futureX = Math.round(this.x + (this.speedX * deltaTime) / 1000);
+  }
+
+  public cancelMove(deltaTime: number): void {
+    this.futureX = this.x;
+    this.futureY = this.y;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -1,4 +1,4 @@
-interface Movable {
+export default interface Movable {
   x: number;
   y: number;
 
@@ -13,4 +13,6 @@ interface Movable {
   moveDown: (deltaTime: number) => void;
   moveLeft: (deltaTime: number) => void;
   moveRight: (deltaTime: number) => void;
+
+  cancelMove: (deltaTime: number) => void;
 }

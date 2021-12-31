@@ -21,7 +21,7 @@ export default class KeyManager {
     this.space = false;
   }
 
-  public async initialize(context: CanvasRenderingContext2D): Promise<void> {
+  public async initialize(): Promise<void> {
     window.addEventListener(
       "keydown",
       (event) => KeyManager.keydown(event, this),

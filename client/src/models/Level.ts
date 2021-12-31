@@ -1,35 +1,40 @@
+import Collidable from "../interfaces/Collidable.js";
+import GameObject from "../interfaces/GameObject.js";
+import Rectangle from "./base/Rectangle.js";
 import SpriteSheet from "./base/SpriteSheet.js";
 import LevelData from "./LevelData.js";
 import SpriteSheetData from "./SpriteSheetData.js";
 
-export default class Level implements GameObject {
+export default class Level implements GameObject, Collidable {
   public name: string;
   public tag: string;
   public width: number;
   public height: number;
 
-  private levelData: LevelData;
-  private tileWidth: number;
-  private tileHeight: number;
-  private columnCount: number;
-  private rowCount: number;
+  public rectangle: Rectangle;
 
-  private backgroundData: number[];
-  private foregroundData: number[];
-  private breakableData: number[];
+  public levelData: LevelData;
+  public tileWidth: number;
+  public tileHeight: number;
+  public columnCount: number;
+  public rowCount: number;
 
-  private levelSpriteSheet: SpriteSheet;
-  private spriteSheetData: SpriteSheetData;
-  private spriteSheetTileWidth: number;
-  private spriteSheetTileHeight: number;
-  private spriteSheetColumnCount: number;
-  private spriteSheetRowCount: number;
+  public backgroundData: number[];
+  public foregroundData: number[];
+  public breakableData: number[];
+
+  public levelSpriteSheet: SpriteSheet;
+  public spriteSheetData: SpriteSheetData;
+  public spriteSheetTileWidth: number;
+  public spriteSheetTileHeight: number;
+  public spriteSheetColumnCount: number;
+  public spriteSheetRowCount: number;
 
   public constructor(name: string) {
     this.name = name;
   }
 
-  public async initialize(context: CanvasRenderingContext2D): Promise<void> {
+  public async initialize(): Promise<void> {
     const response = await window.fetch(`/levels/${this.name}.json`);
     this.levelData = await (response.json() as Promise<LevelData>);
 
@@ -40,6 +45,8 @@ export default class Level implements GameObject {
 
     this.width = this.tileWidth * this.columnCount;
     this.height = this.tileHeight * this.rowCount;
+
+    this.rectangle = new Rectangle(0, 0, this.width, this.height);
 
     this.backgroundData = this.levelData.layers.find(
       (l) => l.name === "background"
@@ -76,6 +83,10 @@ export default class Level implements GameObject {
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   public async update(deltaTime: number, totalTime: number): Promise<void> {}
+
+  public async hasCollision(collider: Rectangle): Promise<boolean> {
+    return true;
+  }
 
   public async draw(context: CanvasRenderingContext2D): Promise<void> {
     this.drawLayer(context, this.backgroundData);

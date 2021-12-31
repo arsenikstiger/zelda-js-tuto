@@ -23,8 +23,8 @@ async function initialize() {
   lastTimestamp = 0;
   totalTime = 0;
 
-  gameManager = new GameManager();
-  await gameManager.initialize(context);
+  gameManager = new GameManager(context);
+  await gameManager.initialize();
 
   window.requestAnimationFrame(async (timestamp) => await gameLoop(timestamp));
 }
