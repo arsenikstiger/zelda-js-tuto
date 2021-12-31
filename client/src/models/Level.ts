@@ -85,7 +85,7 @@ export default class Level implements GameObject, Collidable {
   public async update(deltaTime: number, totalTime: number): Promise<void> {}
 
   public async hasCollision(collider: Rectangle): Promise<boolean> {
-    return true;
+    return false;
   }
 
   public async draw(context: CanvasRenderingContext2D): Promise<void> {

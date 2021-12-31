@@ -5,7 +5,10 @@ import Rectangle from "./base/Rectangle.js";
 import Sprite from "./base/Sprite.js";
 import SpriteSheet from "./base/SpriteSheet.js";
 
-export default class Player extends MovableBase implements GameObject, Collidable {
+export default class Player
+  extends MovableBase
+  implements GameObject, Collidable
+{
   public name: string;
   public lives: number;
   public tag: string;
@@ -15,7 +18,7 @@ export default class Player extends MovableBase implements GameObject, Collidabl
   }
   public set futureX(value: number) {
     this._futureX = value;
-    this.rectangle.x = value;
+    if (this.rectangle) this.rectangle.x = value;
   }
 
   public get futureY(): number {
@@ -23,7 +26,7 @@ export default class Player extends MovableBase implements GameObject, Collidabl
   }
   public set futureY(value: number) {
     this._futureY = value;
-    this.rectangle.y = value;
+    if (this.rectangle) this.rectangle.y = value;
   }
 
   public width: number;
