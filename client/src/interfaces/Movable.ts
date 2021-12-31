@@ -15,4 +15,5 @@ export default interface Movable {
   moveRight: (deltaTime: number) => void;
 
   cancelMove: (deltaTime: number) => void;
+// eslint-disable-next-line semi
 }

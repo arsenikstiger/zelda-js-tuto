@@ -7,4 +7,5 @@ export default interface GameObject {
   initialize: (context: CanvasRenderingContext2D) => void;
   update: (deltaTime: number, totalTime: number) => void;
   draw: (context: CanvasRenderingContext2D) => void;
+// eslint-disable-next-line semi
 }
