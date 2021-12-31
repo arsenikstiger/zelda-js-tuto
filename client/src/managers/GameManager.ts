@@ -21,7 +21,7 @@ export default class GameManager implements GameObject {
     this.keyManager = new KeyManager();
     await this.keyManager.initialize();
 
-    this.level = new Level("level2");
+    this.level = new Level("level3");
     await this.level.initialize();
 
     this.player = new Player("As", 3, 0, 0, 16, 16, 50);
@@ -44,8 +44,8 @@ export default class GameManager implements GameObject {
     // Si on sort du background, on annule le mouvement
     if (!await this.level.contains(this.player.rectangle)) this.player.cancelMove(deltaTime);
     // Si on passe à travers des cases occupées, on annule le mouvement
-    if (await this.level.intersectForeground(this.player.rectangle)) this.player.cancelMove(deltaTime);
-    if (await this.level.intersectBreakable(this.player.rectangle)) this.player.cancelMove(deltaTime);
+    if (await (await this.level.intersectForeground(this.player.rectangle)).isColliding) this.player.cancelMove(deltaTime);
+    if (await (await this.level.intersectBreakable(this.player.rectangle)).isColliding) this.player.cancelMove(deltaTime);
 
     await this.level.update(deltaTime, totalTime);
     await this.player.update(deltaTime, totalTime);

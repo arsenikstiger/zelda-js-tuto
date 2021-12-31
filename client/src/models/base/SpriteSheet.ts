@@ -12,8 +12,8 @@ export default class SpriteSheet {
     this.img = new Image();
     this.img.onload = () => {
       // Define the size of a frame
-      this.frameWidth = this.img.width / this.columnCount;
-      this.frameHeight = this.img.height / this.rowCount;
+      this.frameWidth = Math.floor(this.img.width / this.columnCount);
+      this.frameHeight = Math.floor(this.img.height / this.rowCount);
     };
     this.img.src = url;
   }

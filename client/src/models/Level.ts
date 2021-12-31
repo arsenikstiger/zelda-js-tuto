@@ -1,6 +1,7 @@
 import GameObject from "../interfaces/GameObject.js";
 import Point from "./base/Point.js";
 import Rectangle from "./base/Rectangle.js";
+import RectangleCollision from "./base/RectangleCollision.js";
 import SpriteSheet from "./base/SpriteSheet.js";
 import LevelData from "./LevelData.js";
 import SpriteSheetData from "./SpriteSheetData.js";
@@ -68,10 +69,8 @@ export default class Level implements GameObject {
 
     this.spriteSheetTileWidth = this.spriteSheetData.tilewidth;
     this.spriteSheetTileHeight = this.spriteSheetData.tileheight;
-    this.spriteSheetColumnCount =
-      this.spriteSheetData.imagewidth / this.spriteSheetTileWidth;
-    this.spriteSheetRowCount =
-      this.spriteSheetData.imageheight / this.spriteSheetTileHeight;
+    this.spriteSheetColumnCount = Math.floor(this.spriteSheetData.imagewidth / this.spriteSheetTileWidth);
+    this.spriteSheetRowCount = Math.floor(this.spriteSheetData.imageheight / this.spriteSheetTileHeight);
 
     const spriteSheetImage = `spritesheets/${this.spriteSheetData.image}`;
     this.levelSpriteSheet = new SpriteSheet(
@@ -85,42 +84,48 @@ export default class Level implements GameObject {
   public async update(deltaTime: number, totalTime: number): Promise<void> {}
 
   public async contains(collider: Rectangle): Promise<boolean> {
-    if (collider.x < this.rectangle.x) return false;
-    if (collider.x + collider.width > this.rectangle.x + this.rectangle.width)
-      return false;
-    if (collider.y < this.rectangle.y) return false;
-    if (collider.y + collider.height > this.rectangle.y + this.rectangle.height)
-      return false;
+    // const w = (collider.x < this.rectangle.x);
+    // const e = (collider.x + collider.width > this.rectangle.x + this.rectangle.width);
+    // const n = (collider.y < this.rectangle.y);
+    // const s = (collider.y + collider.height > this.rectangle.y + this.rectangle.height);
+
+    // const rectangleCollision = new RectangleCollision();
 
     return true;
   }
 
-  public async intersectForeground(collider: Rectangle): Promise<boolean> {
+  public async intersectForeground(collider: Rectangle): Promise<RectangleCollision> {
     let tile = await this.tileNumberFromPoint(collider.nw);
-    if (this.foregroundData[tile] > 0) return true;
+    const nw = (this.foregroundData[tile] > 0);
 
     tile = await this.tileNumberFromPoint(collider.ne);
-    if (this.foregroundData[tile] > 0) return true;
+    const ne = this.foregroundData[tile] > 0;
 
     tile = await this.tileNumberFromPoint(collider.sw);
-    if (this.foregroundData[tile] > 0) return true;
+    const sw = this.foregroundData[tile] > 0;
 
     tile = await this.tileNumberFromPoint(collider.se);
-    if (this.foregroundData[tile] > 0) return true;
+    const se = this.foregroundData[tile] > 0;
+
+    const rectangleCollision = new RectangleCollision(nw, ne, sw, se);
+    return rectangleCollision;
   }
 
-  public async intersectBreakable(collider: Rectangle): Promise<boolean> {
+  public async intersectBreakable(collider: Rectangle): Promise<RectangleCollision> {
     let tile = await this.tileNumberFromPoint(collider.nw);
-    if (this.breakableData[tile] > 0) return true;
+    const nw = this.breakableData[tile] > 0;
 
     tile = await this.tileNumberFromPoint(collider.ne);
-    if (this.breakableData[tile] > 0) return true;
+    const ne = this.breakableData[tile] > 0;
 
     tile = await this.tileNumberFromPoint(collider.sw);
-    if (this.breakableData[tile] > 0) return true;
+    const sw = this.breakableData[tile] > 0;
 
     tile = await this.tileNumberFromPoint(collider.se);
-    if (this.breakableData[tile] > 0) return true;
+    const se = this.breakableData[tile] > 0;
+
+    const rectangleCollision = new RectangleCollision(nw, ne, sw, se);
+    return rectangleCollision;
   }
 
   private async tileNumberFromPoint(point: Point): Promise<number> {

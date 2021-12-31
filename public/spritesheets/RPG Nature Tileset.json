@@ -1,0 +1,15 @@
+{ "columns":40,
+ "image":"RPG Nature Tileset.png",
+ "imageheight":288,
+ "imagewidth":641,
+ "margin":0,
+ "name":"RPG Nature Tileset",
+ "spacing":0,
+ "tilecount":720,
+ "tiledversion":"1.7.2",
+ "tileheight":16,
+ "tilewidth":16,
+ "transparentcolor":"#000000",
+ "type":"tileset",
+ "version":"1.6"
+}

@@ -8,12 +8,14 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "sourceMap": true,
     "declaration": true,
+    "sourceMap": true,
+    "inlineSourceMap": true,
+    "inlineSources": true,
     "baseUrl": ".",
     "paths": {
       "*": ["node_modules/*", "./client/src/types/*"]
-    },
+    }
   },
   "include": ["client/src/**/*"]
 }

@@ -11,15 +11,15 @@ export default class Rectangle {
   }
 
   public get ne(): Point {
-    return new Point(this.x + this.width, this.y);
+    return new Point(this.x + this.width - 1, this.y);
   }
 
   public get sw(): Point {
-    return new Point(this.x, this.y + this.height);
+    return new Point(this.x, this.y + this.height - 1);
   }
 
   public get se(): Point {
-    return new Point(this.x + this.width, this.y + this.height);
+    return new Point(this.x + this.width - 1, this.y + this.height - 1);
   }
 
   public constructor(x: number, y: number, width: number, height: number) {
