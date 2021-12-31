@@ -25,6 +25,8 @@ export default class GameManager implements GameObject {
     await this.level.initialize();
 
     this.player = new Player("As", 3, 0, 0, 16, 16, 50);
+    this.player.x = this.level.width / 2 - this.player.width / 2;
+    this.player.y = this.level.height / 2 - this.player.height / 2;
     await this.player.initialize();
 
     this.rectangle = this.level.rectangle;
@@ -39,9 +41,11 @@ export default class GameManager implements GameObject {
     if (this.keyManager.left) this.player.moveLeft(deltaTime);
     if (this.keyManager.right) this.player.moveRight(deltaTime);
 
-    if (await this.level.hasCollision(this.player.rectangle)) {
-      this.player.cancelMove(deltaTime);
-    }
+    // Si on sort du background, on annule le mouvement
+    if (!await this.level.contains(this.player.rectangle)) this.player.cancelMove(deltaTime);
+    // Si on passe à travers des cases occupées, on annule le mouvement
+    if (await this.level.intersectForeground(this.player.rectangle)) this.player.cancelMove(deltaTime);
+    if (await this.level.intersectBreakable(this.player.rectangle)) this.player.cancelMove(deltaTime);
 
     await this.level.update(deltaTime, totalTime);
     await this.player.update(deltaTime, totalTime);
@@ -53,17 +57,4 @@ export default class GameManager implements GameObject {
     await this.level.draw(context);
     await this.player.draw(context);
   }
-
-  // private async checkPlayerCollision() {
-  //   const column = Math.floor(this.player.futureX / this.level.tileWidth);
-  //   const row = Math.floor(this.player.futureY / this.level.tileHeight);
-  //   const tileNumber = row * this.level.columnCount + column;
-
-  //   if (this.level.foregroundData[tileNumber] > 0) {
-  //     this.player.cancelMove(deltaTime);
-  //     console.log(
-  //       `tileNumber:${tileNumber} = ${this.level.foregroundData[tileNumber]}`
-  //     );
-  //   }
-  // }
 }

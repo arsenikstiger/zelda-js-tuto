@@ -1,14 +1,10 @@
 import MovableBase from "../abstracts/MovableBase.js";
-import Collidable from "../interfaces/Collidable.js";
 import GameObject from "../interfaces/GameObject.js";
 import Rectangle from "./base/Rectangle.js";
 import Sprite from "./base/Sprite.js";
 import SpriteSheet from "./base/SpriteSheet.js";
 
-export default class Player
-  extends MovableBase
-  implements GameObject, Collidable
-{
+export default class Player extends MovableBase implements GameObject {
   public name: string;
   public lives: number;
   public tag: string;
@@ -71,7 +67,7 @@ export default class Player
     this.playerSprite = new Sprite(this.playerSpriteSheet, 1, 3);
   }
 
-  public async hasCollision(collider: Rectangle): Promise<boolean> {
+  public async intersect(collider: Rectangle): Promise<boolean> {
     return false;
   }
 

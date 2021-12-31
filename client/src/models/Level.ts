@@ -1,11 +1,11 @@
-import Collidable from "../interfaces/Collidable.js";
 import GameObject from "../interfaces/GameObject.js";
+import Point from "./base/Point.js";
 import Rectangle from "./base/Rectangle.js";
 import SpriteSheet from "./base/SpriteSheet.js";
 import LevelData from "./LevelData.js";
 import SpriteSheetData from "./SpriteSheetData.js";
 
-export default class Level implements GameObject, Collidable {
+export default class Level implements GameObject {
   public name: string;
   public tag: string;
   public width: number;
@@ -84,8 +84,50 @@ export default class Level implements GameObject, Collidable {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   public async update(deltaTime: number, totalTime: number): Promise<void> {}
 
-  public async hasCollision(collider: Rectangle): Promise<boolean> {
-    return false;
+  public async contains(collider: Rectangle): Promise<boolean> {
+    if (collider.x < this.rectangle.x) return false;
+    if (collider.x + collider.width > this.rectangle.x + this.rectangle.width)
+      return false;
+    if (collider.y < this.rectangle.y) return false;
+    if (collider.y + collider.height > this.rectangle.y + this.rectangle.height)
+      return false;
+
+    return true;
+  }
+
+  public async intersectForeground(collider: Rectangle): Promise<boolean> {
+    let tile = await this.tileNumberFromPoint(collider.nw);
+    if (this.foregroundData[tile] > 0) return true;
+
+    tile = await this.tileNumberFromPoint(collider.ne);
+    if (this.foregroundData[tile] > 0) return true;
+
+    tile = await this.tileNumberFromPoint(collider.sw);
+    if (this.foregroundData[tile] > 0) return true;
+
+    tile = await this.tileNumberFromPoint(collider.se);
+    if (this.foregroundData[tile] > 0) return true;
+  }
+
+  public async intersectBreakable(collider: Rectangle): Promise<boolean> {
+    let tile = await this.tileNumberFromPoint(collider.nw);
+    if (this.breakableData[tile] > 0) return true;
+
+    tile = await this.tileNumberFromPoint(collider.ne);
+    if (this.breakableData[tile] > 0) return true;
+
+    tile = await this.tileNumberFromPoint(collider.sw);
+    if (this.breakableData[tile] > 0) return true;
+
+    tile = await this.tileNumberFromPoint(collider.se);
+    if (this.breakableData[tile] > 0) return true;
+  }
+
+  private async tileNumberFromPoint(point: Point): Promise<number> {
+    const column = Math.floor(point.x / this.tileWidth);
+    const row = Math.floor(point.y / this.tileHeight);
+    const tileNumber = row * this.columnCount + column;
+    return tileNumber;
   }
 
   public async draw(context: CanvasRenderingContext2D): Promise<void> {
