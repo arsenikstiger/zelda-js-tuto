@@ -9,7 +9,6 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "declaration": true,
-    "sourceMap": true,
     "inlineSourceMap": true,
     "inlineSources": true,
     "baseUrl": ".",
