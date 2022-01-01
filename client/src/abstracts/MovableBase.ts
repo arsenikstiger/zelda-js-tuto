@@ -1,22 +1,20 @@
-import Movable from "../interfaces/Movable";
+import Movable from "../interfaces/Movable.js";
+import Point from "../models/base/Point.js";
 
 export default abstract class MovableBase implements Movable {
-  public x: number;
-  public y: number;
-
-  protected _futureX: number;
-  public get futureX(): number {
-    return this._futureX;
+  protected _x: number;
+  public get x(): number {
+    return this.x;
   }
-  public set futureX(value: number) {
-    this._futureX = value;
+  public set x(value: number) {
+    this.x = value;
   }
-  protected _futureY: number;
-  public get futureY(): number {
-    return this._futureY;
+  protected _y: number;
+  public get y(): number {
+    return this.y;
   }
-  public set futureY(value: number) {
-    this._futureY = value;
+  public set y(value: number) {
+    this.y = value;
   }
 
   public speed: number;
@@ -24,51 +22,48 @@ export default abstract class MovableBase implements Movable {
   public speedY: number;
 
   constructor(x: number, y: number, speed: number) {
-    this.setPosition(x, y);
+    this.setXY(x, y);
     this.setSpeed(speed);
   }
 
-  public async setPosition(x: number, y: number): Promise<void> {
+  public async setXY(x: number, y: number): Promise<void> {
     this.x = x;
     this.y = y;
-    this.futureX = x;
-    this.futureY = y;
+  }
+
+  public async setPosition(position: Point): Promise<void> {
+    this.x = position.x;
+    this.y = position.y;
   }
 
   public setSpeed(speed: number): void {
     this.speed = speed;
   }
 
-  public moveUp(deltaTime: number): void {
-    this.speedY = -this.speed;
-    this.futureY = Math.round(this.y + (this.speedY * deltaTime) / 1000);
+  public getFuturePosition(
+    deltaTime: number,
+    directionX: number,
+    directionY: number
+  ): Point {
+    const speedX = directionX * this.speed;
+    const speedY = directionY * this.speed;
+    const futureX = Math.round(this.x + (speedX * deltaTime) / 1000);
+    const futureY = Math.round(this.y + (speedY * deltaTime) / 1000);
+    return new Point(futureX, futureY);
   }
 
-  public moveDown(deltaTime: number): void {
-    this.speedY = this.speed;
-    this.futureY = Math.round(this.y + (this.speedY * deltaTime) / 1000);
-  }
-
-  public moveLeft(deltaTime: number): void {
-    this.speedX = -this.speed;
-    this.futureX = Math.round(this.x + (this.speedX * deltaTime) / 1000);
-  }
-
-  public moveRight(deltaTime: number): void {
-    this.speedX = this.speed;
-    this.futureX = Math.round(this.x + (this.speedX * deltaTime) / 1000);
-  }
-
-  public cancelMove(deltaTime: number): void {
-    this.futureX = this.x;
-    this.futureY = this.y;
+  public move(
+    deltaTime: number,
+    directionX: number,
+    directionY: number): void {
+    this.speedX = directionX * this.speed;
+    this.speedY = directionY * this.speed;
+    this.x = Math.round(this.x + (this.speedX * deltaTime) / 1000);
+    this.y = Math.round(this.y + (this.speedY * deltaTime) / 1000);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async update(deltaTime: number, totalTime: number): Promise<void> {
-    this.x = this.futureX;
-    this.y = this.futureY;
-
     this.speedX = 0;
     this.speedY = 0;
   }

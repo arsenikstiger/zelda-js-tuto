@@ -21,7 +21,7 @@ export default class GameManager implements GameObject {
     this.keyManager = new KeyManager();
     await this.keyManager.initialize();
 
-    this.level = new Level("level3");
+    this.level = new Level("level2");
     await this.level.initialize();
 
     this.player = new Player("As", 3, 0, 0, 16, 16, 50);
@@ -36,19 +36,60 @@ export default class GameManager implements GameObject {
   }
 
   public async update(deltaTime: number, totalTime: number): Promise<void> {
-    if (this.keyManager.up) this.player.moveUp(deltaTime);
-    if (this.keyManager.down) this.player.moveDown(deltaTime);
-    if (this.keyManager.left) this.player.moveLeft(deltaTime);
-    if (this.keyManager.right) this.player.moveRight(deltaTime);
+    if (this.keyManager.up && this.keyManager.down) {
+      // cancels vertical movement
+    } else if (this.keyManager.up) {
+      const result = await this.checkPlayerCanMove(deltaTime, totalTime, 0, -1);
+      if (result.canMove) this.player.setPosition(result.futureRectangle);
+    } else if (this.keyManager.down) {
+      const result = await this.checkPlayerCanMove(deltaTime, totalTime, 0, 1);
+      if (result.canMove) this.player.setPosition(result.futureRectangle);
+    }
 
-    // Si on sort du background, on annule le mouvement
-    if (!await this.level.contains(this.player.rectangle)) this.player.cancelMove(deltaTime);
-    // Si on passe à travers des cases occupées, on annule le mouvement
-    if (await (await this.level.intersectForeground(this.player.rectangle)).isColliding) this.player.cancelMove(deltaTime);
-    if (await (await this.level.intersectBreakable(this.player.rectangle)).isColliding) this.player.cancelMove(deltaTime);
+    if (this.keyManager.left && this.keyManager.right) {
+      // cancels horizontal movement
+    } else if (this.keyManager.left) {
+      const result = await this.checkPlayerCanMove(deltaTime, totalTime, -1, 0);
+      if (result.canMove) this.player.setPosition(result.futureRectangle);
+    } else if (this.keyManager.right) {
+      const result = await this.checkPlayerCanMove(deltaTime, totalTime, 1, 0);
+      if (result.canMove) this.player.setPosition(result.futureRectangle);
+    }
 
     await this.level.update(deltaTime, totalTime);
     await this.player.update(deltaTime, totalTime);
+  }
+
+  private async checkPlayerCanMove(
+    deltaTime: number,
+    totalTime: number,
+    directionX: number,
+    directionY: number
+  ): Promise<{ canMove: boolean; futureRectangle?: Rectangle }> {
+    const futureRectangle = this.player.getFutureRectangle(
+      deltaTime,
+      directionX,
+      directionY
+    );
+    //on vérifie que le joueur ne sorte pas du terrain
+    let collision = await this.level.hasCollisionInBackground(futureRectangle);
+    if (!collision.hasAllCollision) return { canMove: false };
+
+    //on vérifie que le joueur ne percute pas un élément de décor
+    collision = await this.level.hasCollisionInForeground(futureRectangle);
+    if (directionX < 0 && collision.hasCollisionAtW) return { canMove: false };
+    if (directionX > 0 && collision.hasCollisionAtE) return { canMove: false };
+    if (directionY < 0 && collision.hasCollisionAtN) return { canMove: false };
+    if (directionY > 0 && collision.hasCollisionAtS) return { canMove: false };
+
+    //on vérifie que le joueur ne percute pas un objet
+    collision = await this.level.hasCollisionInBreakable(futureRectangle);
+    if (directionX < 0 && collision.hasCollisionAtW) return { canMove: false };
+    if (directionX > 0 && collision.hasCollisionAtE) return { canMove: false };
+    if (directionY < 0 && collision.hasCollisionAtN) return { canMove: false };
+    if (directionY > 0 && collision.hasCollisionAtS) return { canMove: false };
+
+    return { canMove: true, futureRectangle: futureRectangle };
   }
 
   public async draw(context: CanvasRenderingContext2D): Promise<void> {

@@ -83,18 +83,24 @@ export default class Level implements GameObject {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   public async update(deltaTime: number, totalTime: number): Promise<void> {}
 
-  public async contains(collider: Rectangle): Promise<boolean> {
-    // const w = (collider.x < this.rectangle.x);
-    // const e = (collider.x + collider.width > this.rectangle.x + this.rectangle.width);
-    // const n = (collider.y < this.rectangle.y);
-    // const s = (collider.y + collider.height > this.rectangle.y + this.rectangle.height);
+  public async hasCollisionInBackground(collider: Rectangle): Promise<RectangleCollision> {
+    let tile = await this.tileNumberFromPoint(collider.nw);
+    const nw = tile != -1;
 
-    // const rectangleCollision = new RectangleCollision();
+    tile = await this.tileNumberFromPoint(collider.ne);
+    const ne = tile != -1;
 
-    return true;
+    tile = await this.tileNumberFromPoint(collider.sw);
+    const sw = tile != -1;
+
+    tile = await this.tileNumberFromPoint(collider.se);
+    const se = tile != -1;
+
+    const rectangleCollision = new RectangleCollision(nw, ne, sw, se);
+    return rectangleCollision;
   }
 
-  public async intersectForeground(collider: Rectangle): Promise<RectangleCollision> {
+  public async hasCollisionInForeground(collider: Rectangle): Promise<RectangleCollision> {
     let tile = await this.tileNumberFromPoint(collider.nw);
     const nw = (this.foregroundData[tile] > 0);
 
@@ -111,7 +117,7 @@ export default class Level implements GameObject {
     return rectangleCollision;
   }
 
-  public async intersectBreakable(collider: Rectangle): Promise<RectangleCollision> {
+  public async hasCollisionInBreakable(collider: Rectangle): Promise<RectangleCollision> {
     let tile = await this.tileNumberFromPoint(collider.nw);
     const nw = this.breakableData[tile] > 0;
 
@@ -131,6 +137,10 @@ export default class Level implements GameObject {
   private async tileNumberFromPoint(point: Point): Promise<number> {
     const column = Math.floor(point.x / this.tileWidth);
     const row = Math.floor(point.y / this.tileHeight);
+
+    if (column < 0 || column >= this.columnCount) return -1;
+    if (row < 0 || row >= this.rowCount) return -1;
+
     const tileNumber = row * this.columnCount + column;
     return tileNumber;
   }

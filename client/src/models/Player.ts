@@ -9,19 +9,19 @@ export default class Player extends MovableBase implements GameObject {
   public lives: number;
   public tag: string;
 
-  public get futureX(): number {
-    return this._futureX;
+  public get x(): number {
+    return this._x;
   }
-  public set futureX(value: number) {
-    this._futureX = value;
+  public set x(value: number) {
+    this._x = value;
     if (this.rectangle) this.rectangle.x = value;
   }
 
-  public get futureY(): number {
-    return this._futureY;
+  public get y(): number {
+    return this._y;
   }
-  public set futureY(value: number) {
-    this._futureY = value;
+  public set y(value: number) {
+    this._y = value;
     if (this.rectangle) this.rectangle.y = value;
   }
 
@@ -65,6 +65,16 @@ export default class Player extends MovableBase implements GameObject {
   public async update(deltaTime: number, totalTime: number): Promise<void> {
     await super.update(deltaTime, totalTime);
     this.playerSprite = new Sprite(this.playerSpriteSheet, 1, 3);
+  }
+
+  public getFutureRectangle(deltaTime: number, directionX: number, directionY: number): Rectangle {
+    const futurePosition = this.getFuturePosition(deltaTime, directionX, directionY);
+    return new Rectangle(
+      futurePosition.x,
+      futurePosition.y,
+      this.width,
+      this.height
+    );
   }
 
   public async intersect(collider: Rectangle): Promise<boolean> {

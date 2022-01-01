@@ -1,3 +1,5 @@
+import Point from "../models/base/Point.js";
+
 export default interface Movable {
   x: number;
   y: number;
@@ -6,14 +8,11 @@ export default interface Movable {
   speedX: number;
   speedY: number;
 
-  setPosition: (x: number, y: number) => void;
+  setXY: (x: number, y: number) => void;
+  setPosition: (position: Point) => void;
   setSpeed: (speed: number) => void;
 
-  moveUp: (deltaTime: number) => void;
-  moveDown: (deltaTime: number) => void;
-  moveLeft: (deltaTime: number) => void;
-  moveRight: (deltaTime: number) => void;
-
-  cancelMove: (deltaTime: number) => void;
-// eslint-disable-next-line semi
+  getFuturePosition: (deltaTime: number, directionX: number, directionY: number) => Point;
+  move: (deltaTime: number, diredctionX: number, directionY: number) => void;
+  // eslint-disable-next-line semi
 }
