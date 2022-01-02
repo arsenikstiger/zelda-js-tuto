@@ -1,0 +1,21 @@
+{ "columns":8,
+ "grid":
+    {
+     "height":16,
+     "orientation":"orthogonal",
+     "width":16
+    },
+ "image":"zelda.png",
+ "imageheight":7232,
+ "imagewidth":256,
+ "margin":0,
+ "name":"zelda",
+ "spacing":0,
+ "tilecount":7232,
+ "tiledversion":"1.7.2",
+ "tileheight":32,
+ "tilewidth":32,
+ "transparentcolor":"#000000",
+ "type":"tileset",
+ "version":"1.6"
+}

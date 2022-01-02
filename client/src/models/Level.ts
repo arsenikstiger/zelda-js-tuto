@@ -31,6 +31,9 @@ export default class Level implements GameObject {
   public spriteSheetColumnCount: number;
   public spriteSheetRowCount: number;
 
+  private bufferCanvas: HTMLCanvasElement;
+  private bufferContext: CanvasRenderingContext2D;
+
   public constructor(name: string) {
     this.name = name;
   }
@@ -48,6 +51,12 @@ export default class Level implements GameObject {
     this.height = this.tileHeight * this.rowCount;
 
     this.rectangle = new Rectangle(0, 0, this.width, this.height);
+
+    if (this.bufferCanvas) this.bufferCanvas.remove();
+    this.bufferCanvas = document.createElement("canvas") as HTMLCanvasElement;
+    this.bufferCanvas.width = this.width;
+    this.bufferCanvas.height = this.height;
+    this.bufferContext = this.bufferCanvas.getContext("2d");
 
     this.backgroundData = this.levelData.layers.find(
       (l) => l.name === "background"
@@ -69,21 +78,28 @@ export default class Level implements GameObject {
 
     this.spriteSheetTileWidth = this.spriteSheetData.tilewidth;
     this.spriteSheetTileHeight = this.spriteSheetData.tileheight;
-    this.spriteSheetColumnCount = Math.floor(this.spriteSheetData.imagewidth / this.spriteSheetTileWidth);
-    this.spriteSheetRowCount = Math.floor(this.spriteSheetData.imageheight / this.spriteSheetTileHeight);
+    this.spriteSheetColumnCount = Math.floor(
+      this.spriteSheetData.imagewidth / this.spriteSheetTileWidth
+    );
+    this.spriteSheetRowCount = Math.floor(
+      this.spriteSheetData.imageheight / this.spriteSheetTileHeight
+    );
 
     const spriteSheetImage = `spritesheets/${this.spriteSheetData.image}`;
     this.levelSpriteSheet = new SpriteSheet(
       spriteSheetImage,
       this.spriteSheetColumnCount,
-      this.spriteSheetRowCount
+      this.spriteSheetRowCount,
+      async () => await this.initializeBuffer()
     );
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   public async update(deltaTime: number, totalTime: number): Promise<void> {}
 
-  public async hasCollisionInBackground(collider: Rectangle): Promise<RectangleCollision> {
+  public async hasCollisionInBackground(
+    collider: Rectangle
+  ): Promise<RectangleCollision> {
     let tile = await this.tileNumberFromPoint(collider.nw);
     const nw = tile != -1;
 
@@ -100,9 +116,11 @@ export default class Level implements GameObject {
     return rectangleCollision;
   }
 
-  public async hasCollisionInForeground(collider: Rectangle): Promise<RectangleCollision> {
+  public async hasCollisionInForeground(
+    collider: Rectangle
+  ): Promise<RectangleCollision> {
     let tile = await this.tileNumberFromPoint(collider.nw);
-    const nw = (this.foregroundData[tile] > 0);
+    const nw = this.foregroundData[tile] > 0;
 
     tile = await this.tileNumberFromPoint(collider.ne);
     const ne = this.foregroundData[tile] > 0;
@@ -117,7 +135,9 @@ export default class Level implements GameObject {
     return rectangleCollision;
   }
 
-  public async hasCollisionInBreakable(collider: Rectangle): Promise<RectangleCollision> {
+  public async hasCollisionInBreakable(
+    collider: Rectangle
+  ): Promise<RectangleCollision> {
     let tile = await this.tileNumberFromPoint(collider.nw);
     const nw = this.breakableData[tile] > 0;
 
@@ -134,6 +154,16 @@ export default class Level implements GameObject {
     return rectangleCollision;
   }
 
+  public async draw(context: CanvasRenderingContext2D): Promise<void> {
+    context.drawImage(this.bufferCanvas, 0, 0, this.width, this.height);
+    await this.drawLayer(context, this.breakableData);
+  }
+
+  private async initializeBuffer(): Promise<void> {
+    await this.drawLayer(this.bufferContext, this.backgroundData);
+    await this.drawLayer(this.bufferContext, this.foregroundData);
+  }
+
   private async tileNumberFromPoint(point: Point): Promise<number> {
     const column = Math.floor(point.x / this.tileWidth);
     const row = Math.floor(point.y / this.tileHeight);
@@ -143,12 +173,6 @@ export default class Level implements GameObject {
 
     const tileNumber = row * this.columnCount + column;
     return tileNumber;
-  }
-
-  public async draw(context: CanvasRenderingContext2D): Promise<void> {
-    this.drawLayer(context, this.backgroundData);
-    this.drawLayer(context, this.foregroundData);
-    this.drawLayer(context, this.breakableData);
   }
 
   private async drawLayer(

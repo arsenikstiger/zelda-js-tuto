@@ -5,15 +5,26 @@ export default class SpriteSheet {
   public frameWidth: number;
   public frameHeight: number;
 
-  constructor(url: string, columnCount: number, rowCount: number) {
+  constructor(
+    url: string,
+    columnCount: number,
+    rowCount: number,
+    onloadCallback?: (this: SpriteSheet) => void,
+    onerrorCallback?: (this: SpriteSheet) => void
+  ) {
     this.columnCount = columnCount;
     this.rowCount = rowCount;
-    
+
     this.img = new Image();
     this.img.onload = () => {
       // Define the size of a frame
       this.frameWidth = Math.floor(this.img.width / this.columnCount);
       this.frameHeight = Math.floor(this.img.height / this.rowCount);
+
+      if (onloadCallback) onloadCallback.call(this);
+    };
+    this.img.onerror = () => {
+      if (onerrorCallback) onerrorCallback.call(this);
     };
     this.img.src = url;
   }
