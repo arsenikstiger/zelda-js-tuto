@@ -1,4 +1,4 @@
-export default class Tileset {
+export default class TileSet {
   firstgid: number;
   source: string;
 }

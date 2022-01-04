@@ -1,5 +1,5 @@
-import Point from "../models/base/Point.js";
-import Rectangle from "../models/base/Rectangle.js";
+import Point from "../Point.js";
+import Rectangle from "../Rectangle.js";
 
 export default interface Movable {
   x: number;

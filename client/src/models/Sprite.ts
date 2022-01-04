@@ -18,7 +18,7 @@ export default class Sprite {
     width: number = 0,
     height: number = 0
   ): Promise<void> {
-    this.spriteSheet.drawSprite(
+    this.spriteSheet.draw(
       context,
       this.column,
       this.row,

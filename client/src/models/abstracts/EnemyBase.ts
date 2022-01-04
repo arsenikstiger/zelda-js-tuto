@@ -1,7 +1,7 @@
-import Character from "../../abstracts/Character.js";
-import Point from "./Point.js";
+import CharacterBase from "./CharacterBase.js";
+import Point from "../Point.js";
 
-export default class Enemy extends Character {
+export default abstract class EnemyBase extends CharacterBase {
   public constructor(
     name: string,
     lives: number,

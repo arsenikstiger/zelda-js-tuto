@@ -1,16 +1,17 @@
-import GameObject from "../interfaces/GameObject.js";
+import GameObject from "../models/interfaces/GameObject.js";
 import KeyManager from "../managers/KeyManager.js";
-import Rectangle from "../models/base/Rectangle.js";
-import Enemy from "../models/base/Enemy.js";
-import Level from "../models/Level.js";
-import Player from "../models/Player.js";
-import Alpha from "../models/enemies/alpha.js";
+import EnemyBase from "../models/abstracts/EnemyBase.js";
+import Level from "../level/Level.js";
+import Rectangle from "../models/Rectangle.js";
+import Player from "../player/Player.js";
+import MoveResult from "../models/MoveResult.js";
+import EnemyFactory from "../enemies/EnemyFactory.js";
 
 export default class GameManager implements GameObject {
   public keyManager: KeyManager;
   public level: Level;
   public player: Player;
-  public enemies: Enemy[];
+  public enemies: EnemyBase[];
   public tag: string;
   public rectangle: Rectangle;
 
@@ -24,22 +25,21 @@ export default class GameManager implements GameObject {
     this.keyManager = new KeyManager();
     await this.keyManager.initialize();
 
-    this.level = new Level("level2");
-    await this.level.initialize();
+    this.player = new Player("As", 3, 0, 0);
+    await this.player.initialize();
+
+    await this.initializeLevel();
     this.rectangle = this.level.rectangle;
     this.context.canvas.width = this.level.width;
     this.context.canvas.height = this.level.height;
+  }
 
-    this.player = new Player("As", 3, 0, 0);
-    this.player.x = this.level.width / 2 - this.player.width / 2;
-    this.player.y = this.level.height / 2 - this.player.height / 2;
-    await this.player.initialize();
-
-    const enemy = new Alpha(16, 16);
-    await enemy.initialize();
-
-    this.enemies = [];
-    this.enemies.push(enemy);
+  public async beforeupdate(): Promise<void> {
+    await this.level.beforeupdate();
+    for (const enemy of this.enemies) {
+      await enemy.beforeupdate();
+    }
+    await this.player.beforeupdate();
   }
 
   public async update(deltaTime: number, totalTime: number): Promise<void> {
@@ -48,22 +48,11 @@ export default class GameManager implements GameObject {
     } else if (this.keyManager.up) {
       const result = await this.checkPlayerMove(deltaTime, totalTime, 0, -1);
       if (result.canMove) await this.player.setPosition(result.futureRectangle);
-      if (result.mustChangeLevel) {
-        this.level = new Level("level3");
-        await this.level.initialize();
-        await this.player.setXY(
-          this.player.x,
-          this.level.height - this.player.height
-        );
-      }
+      if (result.mustChangeLevel) return await this.initializeLevel(result);
     } else if (this.keyManager.down) {
       const result = await this.checkPlayerMove(deltaTime, totalTime, 0, 1);
       if (result.canMove) await this.player.setPosition(result.futureRectangle);
-      if (result.mustChangeLevel) {
-        this.level = new Level("level3");
-        await this.level.initialize();
-        await this.player.setXY(this.player.x, 0);
-      }
+      if (result.mustChangeLevel) return await this.initializeLevel(result);
     }
 
     if (this.keyManager.left && this.keyManager.right) {
@@ -71,22 +60,11 @@ export default class GameManager implements GameObject {
     } else if (this.keyManager.left) {
       const result = await this.checkPlayerMove(deltaTime, totalTime, -1, 0);
       if (result.canMove) await this.player.setPosition(result.futureRectangle);
-      if (result.mustChangeLevel) {
-        this.level = new Level("level3");
-        await this.level.initialize();
-        await this.player.setXY(
-          this.level.width - this.player.width,
-          this.player.y
-        );
-      }
+      if (result.mustChangeLevel) return await this.initializeLevel(result);
     } else if (this.keyManager.right) {
       const result = await this.checkPlayerMove(deltaTime, totalTime, 1, 0);
       if (result.canMove) await this.player.setPosition(result.futureRectangle);
-      if (result.mustChangeLevel) {
-        this.level = new Level("level3");
-        await this.level.initialize();
-        await this.player.setXY(0, this.player.y);
-      }
+      if (result.mustChangeLevel) return await this.initializeLevel(result);
     }
 
     for (const enemy of this.enemies) {
@@ -100,43 +78,6 @@ export default class GameManager implements GameObject {
     await this.player.update(deltaTime, totalTime);
   }
 
-  private async checkPlayerMove(
-    deltaTime: number,
-    totalTime: number,
-    directionX: number,
-    directionY: number
-  ): Promise<{
-    canMove: boolean;
-    mustChangeLevel?: boolean;
-    futureRectangle?: Rectangle;
-  }> {
-    const futureRectangle = await this.player.getFutureRectangle(
-      deltaTime,
-      directionX,
-      directionY
-    );
-    //on vérifie que le joueur ne sorte pas du terrain
-    let collision = await this.level.hasCollisionInBackground(futureRectangle);
-    if (!collision.hasAllCollision)
-      return { canMove: false, mustChangeLevel: true };
-
-    //on vérifie que le joueur ne percute pas un élément de décor
-    collision = await this.level.hasCollisionInForeground(futureRectangle);
-    if (directionX < 0 && collision.hasCollisionAtW) return { canMove: false };
-    if (directionX > 0 && collision.hasCollisionAtE) return { canMove: false };
-    if (directionY < 0 && collision.hasCollisionAtN) return { canMove: false };
-    if (directionY > 0 && collision.hasCollisionAtS) return { canMove: false };
-
-    //on vérifie que le joueur ne percute pas un objet
-    collision = await this.level.hasCollisionInBreakable(futureRectangle);
-    if (directionX < 0 && collision.hasCollisionAtW) return { canMove: false };
-    if (directionX > 0 && collision.hasCollisionAtE) return { canMove: false };
-    if (directionY < 0 && collision.hasCollisionAtN) return { canMove: false };
-    if (directionY > 0 && collision.hasCollisionAtS) return { canMove: false };
-
-    return { canMove: true, futureRectangle: futureRectangle };
-  }
-
   public async draw(context: CanvasRenderingContext2D): Promise<void> {
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
@@ -145,5 +86,83 @@ export default class GameManager implements GameObject {
       await enemy.draw(context);
     }
     await this.player.draw(context);
+  }
+
+  private async checkPlayerMove(
+    deltaTime: number,
+    totalTime: number,
+    directionX: number,
+    directionY: number
+  ): Promise<MoveResult> {
+    const futureRectangle = await this.player.getFutureRectangle(
+      deltaTime,
+      directionX,
+      directionY
+    );
+    //on vérifie que le joueur ne sorte pas du terrain
+    let insideCollision = await this.level.isInside(futureRectangle);
+    if (!insideCollision.hasAllCollision)
+      return { directionX, directionY, canMove: false, mustChangeLevel: true };
+
+    //on vérifie que le joueur ne percute pas un élément de décor
+    insideCollision = await this.level.hasCollisionWithBackground(
+      futureRectangle
+    );
+    if (directionX < 0 && insideCollision.hasCollisionAtW)
+      return { directionX, directionY, canMove: false };
+    if (directionX > 0 && insideCollision.hasCollisionAtE)
+      return { directionX, directionY, canMove: false };
+    if (directionY < 0 && insideCollision.hasCollisionAtN)
+      return { directionX, directionY, canMove: false };
+    if (directionY > 0 && insideCollision.hasCollisionAtS)
+      return { directionX, directionY, canMove: false };
+
+    return {
+      directionX,
+      directionY,
+      canMove: true,
+      futureRectangle: futureRectangle,
+    };
+  }
+
+  private async initializeLevel(moveResult?: MoveResult): Promise<void> {
+    if (!moveResult) {
+      this.level = new Level("level2");
+      await this.level.initialize();
+
+      const playerPosition = this.level.positionsLayer.objects.find(
+        (o) => o.type === "Player" && o.name === "player" && o.point
+      );
+      await this.player.setXY(playerPosition.x, playerPosition.y);
+    } else {
+      this.level = new Level("level3");
+      await this.level.initialize();
+
+      if (moveResult.directionX < 0) {
+        await this.player.setXY(
+          this.level.width - this.player.width,
+          this.player.y
+        );
+      } else if (moveResult.directionX > 0) {
+        await this.player.setXY(0, this.player.y);
+      } else if (moveResult.directionY < 0) {
+        await this.player.setXY(
+          this.player.x,
+          this.level.height - this.player.height
+        );
+      } else if (moveResult.directionY > 0) {
+        await this.player.setXY(this.player.x, 0);
+      }
+    }
+
+    this.enemies = [];
+    const enemyPositions = this.level.positionsLayer.objects.filter(
+      (o) => o.type === "Enemy" && o.point
+    );
+    for (const enemyPosition of enemyPositions) {
+      const enemy = EnemyFactory.create(enemyPosition.name, enemyPosition.x, enemyPosition.y);
+      await enemy.initialize();
+      this.enemies.push(enemy);
+    }
   }
 }

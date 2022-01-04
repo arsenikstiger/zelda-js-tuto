@@ -1,6 +1,6 @@
-import Enemy from "../base/Enemy.js";
+import EnemyBase from "../models/abstracts/EnemyBase.js";
 
-export default class Delta extends Enemy {
+export default class Delta extends EnemyBase {
   public constructor(
     x: number,
     y: number

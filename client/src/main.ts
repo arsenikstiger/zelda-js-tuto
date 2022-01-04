@@ -34,11 +34,16 @@ async function gameLoop(timestamp: number) {
   totalTime = totalTime + deltaTime;
   lastTimestamp = totalTime;
 
+  await beforeupdate();
   await update(deltaTime, totalTime);
   await draw(context);
 
   // Keep requesting new frames
   window.requestAnimationFrame(async (timestamp) => await gameLoop(timestamp));
+}
+
+async function beforeupdate() {
+  await gameManager.beforeupdate();
 }
 
 async function update(deltaTime: number, totalTime: number) {

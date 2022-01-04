@@ -1,11 +1,14 @@
 import MovableBase from "./MovableBase.js";
 import GameObject from "../interfaces/GameObject.js";
-import Sprite from "../models/base/Sprite.js";
-import SpriteSheet from "../models/base/SpriteSheet.js";
-import Point from "../models/base/Point.js";
-import RecurringTimer from "../models/RecurringTimer.js";
+import RecurringTimer from "../RecurringTimer.js";
+import SpriteSheet from "../SpriteSheet.js";
+import Sprite from "../Sprite.js";
+import Point from "../Point.js";
 
-export default abstract class Character extends MovableBase implements GameObject {
+export default abstract class CharacterBase
+  extends MovableBase
+  implements GameObject
+{
   public name: string;
   public lives: number;
   public tag: string;
@@ -76,7 +79,6 @@ export default abstract class Character extends MovableBase implements GameObjec
     if (this.directionY < 0) {
       this.characterSpritePoint =
         this.upAnimation[this.animationNumber % this.upAnimation.length];
-      console.log("UP");
     } else if (this.directionY > 0) {
       this.characterSpritePoint =
         this.downAnimation[this.animationNumber % this.downAnimation.length];
@@ -101,6 +103,8 @@ export default abstract class Character extends MovableBase implements GameObjec
   }
 
   public async draw(context: CanvasRenderingContext2D): Promise<void> {
+    if (!this.characterSprite) return;
+
     await this.characterSprite.draw(
       context,
       this.x,

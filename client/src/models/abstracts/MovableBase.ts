@@ -1,6 +1,6 @@
 import Movable from "../interfaces/Movable.js";
-import Point from "../models/base/Point.js";
-import Rectangle from "../models/base/Rectangle.js";
+import Point from "../Point.js";
+import Rectangle from "../Rectangle.js";
 
 export default abstract class MovableBase implements Movable {
   protected _x: number;
@@ -125,8 +125,11 @@ export default abstract class MovableBase implements Movable {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public async update(deltaTime: number, totalTime: number): Promise<void> {
+  public async beforeupdate(): Promise<void> {
     this.directionX = 0;
     this.directionY = 0;
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  public async update(deltaTime: number, totalTime: number): Promise<void> {}
 }

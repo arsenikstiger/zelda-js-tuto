@@ -1,5 +1,4 @@
-import Character from "../abstracts/Character.js";
-import Point from "./base/Point.js";
+import Character from "../models/abstracts/CharacterBase.js";
 
 export default class Player extends Character {
   public constructor(
