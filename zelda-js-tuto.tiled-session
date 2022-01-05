@@ -30,18 +30,18 @@
         },
         "public/levels/level2.json": {
             "scale": 3,
-            "selectedLayer": 1,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 336,
-                "y": 121.99999999999997
+                "x": 367.33333333333326,
+                "y": 111.33333333333331
             }
         },
         "public/levels/level3.json": {
             "scale": 3,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": -398,
-                "y": 16.166666666666657
+                "x": -142.66666666666666,
+                "y": 117
             }
         },
         "public/levels/level4.json": {

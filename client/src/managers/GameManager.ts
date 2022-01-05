@@ -6,6 +6,7 @@ import Rectangle from "../models/Rectangle.js";
 import Player from "../player/Player.js";
 import MoveResult from "../models/MoveResult.js";
 import EnemyFactory from "../enemies/EnemyFactory.js";
+import LayerObjectType from "../enums/LayerObjectType.js";
 
 export default class GameManager implements GameObject {
   public keyManager: KeyManager;
@@ -68,7 +69,7 @@ export default class GameManager implements GameObject {
     }
 
     for (const enemy of this.enemies) {
-      await enemy.move(deltaTime, 1, 0);
+      await enemy.move(deltaTime, totalTime);
     }
 
     await this.level.update(deltaTime, totalTime);
@@ -131,7 +132,7 @@ export default class GameManager implements GameObject {
       await this.level.initialize();
 
       const playerPosition = this.level.positionsLayer.objects.find(
-        (o) => o.type === "Player" && o.name === "player" && o.point
+        (o) => o.type === "Player" && o.name === "Player" && o.point
       );
       await this.player.setXY(playerPosition.x, playerPosition.y);
     } else {
@@ -160,8 +161,18 @@ export default class GameManager implements GameObject {
       (o) => o.type === "Enemy" && o.point
     );
     for (const enemyPosition of enemyPositions) {
-      const enemy = EnemyFactory.create(enemyPosition.name, enemyPosition.x, enemyPosition.y);
+      const enemy = EnemyFactory.create(
+        enemyPosition.name,
+        enemyPosition.x,
+        enemyPosition.y
+      );
       await enemy.initialize();
+
+      const enemyPath = this.level.positionsLayer.objects.find(
+        (o) => o.type === "Path" && o.name === enemy.name
+      );
+      enemy.setPath(enemyPath.polygon);
+
       this.enemies.push(enemy);
     }
   }
