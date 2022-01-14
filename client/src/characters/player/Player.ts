@@ -1,4 +1,4 @@
-import Character from "../models/abstracts/CharacterBase.js";
+import Character from "../../models/abstracts/CharacterBase.js";
 
 export default class Player extends Character {
   public constructor(
@@ -6,6 +6,7 @@ export default class Player extends Character {
     lives: number,
     x: number,
     y: number,
+    speed: number = 50
   ) {
     super(
       name,
@@ -14,7 +15,7 @@ export default class Player extends Character {
       y,
       16,
       16,
-      50,
+      speed,
       "spritesheets/player2.png",
       2,
       4,

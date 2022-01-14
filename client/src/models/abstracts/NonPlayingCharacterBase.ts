@@ -1,7 +1,7 @@
 import CharacterBase from "./CharacterBase.js";
 import Point from "../Point.js";
 
-export default abstract class EnemyBase extends CharacterBase {
+export default abstract class NonPlayingCharacterBase extends CharacterBase {
   public path: Point[];
   public currentPathPoint: number;
 
@@ -42,7 +42,7 @@ export default abstract class EnemyBase extends CharacterBase {
     );
   }
 
-  public async setPath(path: Point[]) {
+  public async setPath(path: Point[]): Promise<void> {
     this.currentPathPoint = 1;
     this.path = [];
     for (const p of path) {

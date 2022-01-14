@@ -3,8 +3,12 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "public/levels/level3.json",
+    "activeFile": "public/levels/maze.json",
     "expandedProjectPaths": [
+        "public/spritesheets",
+        "public/worlds",
+        "public/levels",
+        "public"
     ],
     "file.lastUsedOpenFilter": "Tous les Fichiers (*)",
     "fileStates": {
@@ -32,16 +36,16 @@
             "scale": 3,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 367.33333333333326,
-                "y": 111.33333333333331
+                "x": 382,
+                "y": 120
             }
         },
         "public/levels/level3.json": {
             "scale": 3,
-            "selectedLayer": 3,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": -142.66666666666666,
-                "y": 117
+                "x": 238,
+                "y": 91.66666666666666
             }
         },
         "public/levels/level4.json": {
@@ -50,6 +54,14 @@
             "viewCenter": {
                 "x": 150.5,
                 "y": 62.5
+            }
+        },
+        "public/levels/maze.json": {
+            "scale": 1.5,
+            "selectedLayer": 5,
+            "viewCenter": {
+                "x": -434,
+                "y": 69.99999999999997
             }
         },
         "public/spritesheets/RPG Nature Tileset Autumn.json": {
@@ -81,13 +93,15 @@
     "map.width": 20,
     "openFiles": [
         "public/levels/level2.json",
-        "public/levels/level3.json"
+        "public/levels/level3.json",
+        "public/levels/maze.json"
     ],
     "project": "zelda-js-tuto.tiled-project",
     "property.type": "object",
     "recentFiles": [
         "public/levels/level2.json",
         "public/levels/level3.json",
+        "public/levels/maze.json",
         "public/levels/level4.json",
         "public/levels/level1.json",
         "public/spritesheets/zelda.json",

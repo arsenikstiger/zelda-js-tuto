@@ -1,18 +1,17 @@
 import GameObject from "../models/interfaces/GameObject.js";
-import KeyManager from "../managers/KeyManager.js";
-import EnemyBase from "../models/abstracts/EnemyBase.js";
+import KeyManager from "./KeyManager.js";
+import NonPlayingCharacterBase from "../models/abstracts/NonPlayingCharacterBase.js";
 import Level from "../level/Level.js";
 import Rectangle from "../models/Rectangle.js";
-import Player from "../player/Player.js";
+import Player from "../characters/player/Player.js";
 import MoveResult from "../models/MoveResult.js";
-import EnemyFactory from "../enemies/EnemyFactory.js";
-import LayerObjectType from "../enums/LayerObjectType.js";
+import EnemyFactory from "../characters/enemies/EnemyFactory.js";
 
-export default class GameManager implements GameObject {
+export default class ZeldaGameManager implements GameObject {
   public keyManager: KeyManager;
   public level: Level;
   public player: Player;
-  public enemies: EnemyBase[];
+  public enemies: NonPlayingCharacterBase[];
   public tag: string;
   public rectangle: Rectangle;
 

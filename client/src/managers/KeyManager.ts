@@ -1,24 +1,27 @@
 export default class KeyManager {
-  public left: boolean;
-  public right: boolean;
-  public up: boolean;
-  public down: boolean;
+  public enter: boolean;
   public space: boolean;
+  public left: boolean;
+  public up: boolean;
+  public right: boolean;
+  public down: boolean;
 
   public static keyMap: Record<number, string> = {
-    39: "right",
+    13: "enter",
+    32: "space",
     37: "left",
     38: "up",
+    39: "right",
     40: "down",
-    32: "space",
   };
 
   constructor() {
-    this.left = false;
-    this.right = false;
-    this.up = false;
-    this.down = false;
+    this.enter = false;
     this.space = false;
+    this.left = false;
+    this.up = false;
+    this.right = false;
+    this.down = false;
   }
 
   public async initialize(): Promise<void> {

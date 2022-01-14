@@ -1,4 +1,4 @@
-import GameManager from "./managers/GameManager.js";
+import MazeGameManager from "./managers/MazeGameManager.js";
 
 let canvas: HTMLCanvasElement;
 let context: CanvasRenderingContext2D;
@@ -6,7 +6,7 @@ let totalTime: number;
 let lastTimestamp: number;
 let deltaTime: number;
 
-let gameManager: GameManager;
+let gameManager: MazeGameManager;
 
 initialize();
 
@@ -23,7 +23,7 @@ async function initialize() {
   lastTimestamp = 0;
   totalTime = 0;
 
-  gameManager = new GameManager(context);
+  gameManager = new MazeGameManager(context);
   await gameManager.initialize();
 
   window.requestAnimationFrame(async (timestamp) => await gameLoop(timestamp));

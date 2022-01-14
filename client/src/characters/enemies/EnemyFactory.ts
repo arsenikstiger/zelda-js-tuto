@@ -1,11 +1,11 @@
-import EnemyBase from "../models/abstracts/EnemyBase.js";
+import NonPlayingCharacterBase from "../../models/abstracts/NonPlayingCharacterBase.js";
 import Alpha from "./Alpha.js";
 import Beta from "./Beta.js";
 import Delta from "./Delta.js";
 import Gamma from "./Gamma.js";
 
 export default class EnemyFactory {
-  public static create(enemyType: string, x: number, y: number): EnemyBase {
+  public static create(enemyType: string, x: number, y: number): NonPlayingCharacterBase {
     switch (enemyType) {
       case "Alpha":
         return new Alpha(x, y);

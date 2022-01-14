@@ -1,6 +1,6 @@
-import EnemyBase from "../models/abstracts/EnemyBase.js";
+import NonPlayingCharacterBase from "../../models/abstracts/NonPlayingCharacterBase.js";
 
-export default class Beta extends EnemyBase {
+export default class Beta extends NonPlayingCharacterBase {
   public constructor(
     x: number,
     y: number

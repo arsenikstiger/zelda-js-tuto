@@ -12,6 +12,8 @@ import TileLayer from "../models/TileLayer.js";
 
 export default class Level implements GameObject {
   public name: string;
+  public json: string;
+
   public tag: string;
   public width: number;
   public height: number;
@@ -38,13 +40,18 @@ export default class Level implements GameObject {
   private bufferCanvas: HTMLCanvasElement;
   private bufferContext: CanvasRenderingContext2D;
 
-  public constructor(name: string) {
+  public constructor(name: string, json: string = "") {
     this.name = name;
+    this.json = json;
   }
 
   public async initialize(): Promise<void> {
-    const response = await window.fetch(`/levels/${this.name}.json`);
-    this.levelData = await (response.json() as Promise<LevelData>);
+    if (this.name && this.name !== "") {
+      const response = await window.fetch(`/levels/${this.name}.json`);
+      this.levelData = await (response.json() as Promise<LevelData>);
+    } else {
+      this.levelData = JSON.parse(this.json) as LevelData;
+    }
 
     this.tileWidth = this.levelData.tilewidth;
     this.tileHeight = this.levelData.tileheight;
